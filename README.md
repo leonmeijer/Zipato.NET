@@ -1,5 +1,5 @@
 # LVMS.Zipato.NET
-C# helper library to talk to the the Zipato Zipabox controller
+Unofficial C# helper library to talk to the the Zipato Zipabox controller
 
 Open source library for communication with the Zipabox controller from Zipato. 
 According to www.zipato.com, Zipato is an interactive security and automation system based on cloud technology. You can control, customize and automate all power devices in your home, watch live video from your home and get instant alerts in case of any security issue. The controller/gateway supports various automation protocols (Z-Wave, ZigBee, KNX, 433 MHz, EnOcean).
