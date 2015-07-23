@@ -28,11 +28,9 @@ namespace ConsoleApplication1
             var client = new ZipatoClient();
             await client.LoginAsync(username, password);
 
-            //var endpoints = await client.GetEndpointsAsync();
+            var endpoints = await client.GetEndpointsAsync();
 
-            var kantoorverlichtingEndpoint = await client.GetEndpointAsync("004283c5-652e-42aa-878c-c52b6b345b94");
-
-            await client.SendStateChangeCommand(kantoorverlichtingEndpoint, false);
+           
         }
     }
 }
