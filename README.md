@@ -6,4 +6,4 @@ According to www.zipato.com, Zipato is an interactive security and automation sy
 This library is under development. The goal is to retrieve the status from your devices and control devices such
 as lamps,  roller shutters etc.
 
-This Portable Library is compatible with: .Net 4.5/4.6, Windows (Phone) 8.1 Universal Apps and Windows Phone 8.1 Silverlight
+This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1 Universal Apps and Windows Phone 8.1 Silverlight
