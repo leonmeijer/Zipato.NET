@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LVMS.Zipato.NET", "LVMS.Zipato.NET\LVMS.Zipato.NET.csproj", "{CC983726-6D11-4680-A547-30DED5F5E2BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LVMS.Zipato.NET.TestClient", "ConsoleApplication1\LVMS.Zipato.NET.TestClient.csproj", "{B6BCD778-7CDD-4DD1-B375-BBBF8C7F11A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC983726-6D11-4680-A547-30DED5F5E2BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC983726-6D11-4680-A547-30DED5F5E2BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC983726-6D11-4680-A547-30DED5F5E2BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC983726-6D11-4680-A547-30DED5F5E2BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6BCD778-7CDD-4DD1-B375-BBBF8C7F11A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6BCD778-7CDD-4DD1-B375-BBBF8C7F11A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6BCD778-7CDD-4DD1-B375-BBBF8C7F11A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6BCD778-7CDD-4DD1-B375-BBBF8C7F11A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
