@@ -1,4 +1,4 @@
-# LVMS,Zipato.NET
+# LVMS.Zipato.NET
 C# helper library to talk to the the Zipato Zipabox controller
 
 Open source library for communication with the Zipabox controller from Zipato. 
