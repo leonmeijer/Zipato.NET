@@ -18,9 +18,9 @@ namespace ConsoleApplication1
         static async Task Connect()
         {
             Console.WriteLine("Zipato API Test Client");
-            Console.Write("User name: ");
+            Console.Write("User name: ");            
             string username = Console.ReadLine();
-            Console.Write("Password: ");
+            Console.Write("Password: ");            
             string password = Console.ReadLine();
             Console.WriteLine();
             Console.WriteLine("Connecting...");
@@ -28,7 +28,11 @@ namespace ConsoleApplication1
             var client = new ZipatoClient();
             await client.LoginAsync(username, password);
 
-            var endpoints = client.GetEndpointsAsync();
+            //var endpoints = await client.GetEndpointsAsync();
+
+            var kantoorverlichtingEndpoint = await client.GetEndpointAsync("004283c5-652e-42aa-878c-c52b6b345b94");
+
+            await client.SendStateChangeCommand(kantoorverlichtingEndpoint, false);
         }
     }
 }

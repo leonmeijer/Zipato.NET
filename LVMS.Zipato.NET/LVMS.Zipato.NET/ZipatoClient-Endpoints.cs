@@ -1,25 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using LVMS.Zipato.Model;
-using RestSharp.Portable;
+using PortableRest;
 
 namespace LVMS.Zipato
 {
     public partial class ZipatoClient
     {
-        public async Task<Endpoint[]> GetEndpointsAsync()
+        Endpoint[] _cachedEndpoints;
+        Dictionary<string, Endpoint> _cachedEndpoints2;
+
+        public async Task<Endpoint[]> GetEndpointsAsync(bool allowCache = true)
         {
             CheckInitialized();
 
-            var request = new RestRequest("endpoints", Method.GET);
+            if (allowCache && _cachedEndpoints != null)
+                return _cachedEndpoints;
+
+            var request = new RestRequest("endpoints", HttpMethod.Get);
             PrepareRequest(request);
-            var result = await _httpClient.Execute<Endpoint[]>(request);
-            if (result.StatusCode != System.Net.HttpStatusCode.OK)
-                throw new Exceptions.RequestFailedException(result.StatusCode);
-            return result.Data;
+            var result = await _httpClient.ExecuteAsync<Endpoint[]>(request);
+
+            if (allowCache)
+                _cachedEndpoints = result;
+            return result;
         }
+
+        public async Task<Endpoint> GetEndpointAsync(string uuid, bool allowCache = true)
+        {
+            CheckInitialized();
+
+            if (allowCache && _cachedEndpoints2 != null && _cachedEndpoints2.ContainsKey(uuid))
+                return _cachedEndpoints2[uuid];
+
+            var request = new RestRequest("endpoints/" + uuid + "?attributes=true", HttpMethod.Get);
+            
+            PrepareRequest(request);
+            var result = await _httpClient.ExecuteAsync<Endpoint>(request);
+
+            if (allowCache)
+            {
+                if (_cachedEndpoints2 == null)
+                    _cachedEndpoints2 = new Dictionary<string, Endpoint>();
+
+                _cachedEndpoints2.Add(uuid, result);
+            }
+            return result;
+        }
+
+        
     }
 }
