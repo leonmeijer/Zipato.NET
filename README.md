@@ -5,7 +5,7 @@ LVMS.Zipato.NET
 =========
 
 Open source library for communication with the Zipabox controller from Zipato. 
-Zipato is interactive security and automation system based on cloud technology. You can control, customize and automate all power devices in your home, watch live video from your home and get instant alerts in case of any security issue.
+According to www.zipato.com, Zipato is an interactive security and automation system based on cloud technology. You can control, customize and automate all power devices in your home, watch live video from your home and get instant alerts in case of any security issue. The controller/gateway supports various automation protocols (Z-Wave, ZigBee, KNX, 433 MHz, EnOcean).
 
 This library is under development. The goal is to retrieve the status from your devices and control devices such
 as lamps,  roller shutters etc.
