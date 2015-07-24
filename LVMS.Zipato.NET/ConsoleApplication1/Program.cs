@@ -32,7 +32,7 @@ namespace LVMS.Zipato.TestClient
 
             var endpoints = await client.GetEndpointsAsync();
             
-            await client.SendStateChangeCommandByName("Kantoorverlichting", true);
+            //await client.SendStateChangeCommandByName("Kantoorverlichting", true);
 
         }
 
@@ -65,7 +65,7 @@ namespace LVMS.Zipato.TestClient
         /// <returns></returns>
         private static System.Net.NetworkCredential GetCredentialsViaPrompt()
         {
-            Console.WriteLine("Please give your Zipato credentials.");
+            Console.WriteLine("Please enter your Zipato credentials.");
             Console.Write("User name (e-mail address): ");
             string username = Console.ReadLine();
             Console.Write("Password: ");

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
     <metadata minClientVersion="2.8.1">
         <id>LVMS.ZipatoNet.Signed</id>
-        <version>0.1</version>
+        <version>0.2.0-Beta1</version>
         <title>ZipatoNet</title>
         <authors>Leon Meijer</authors>
         <owners>LVM Software</owners>
@@ -21,6 +21,8 @@
             <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
             <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
             <dependency id="Microsoft.Net.Http" version="2.2.29" />
+            <dependency id="PCLCrypto" version="1.0.2.15130" />
+            <dependency id="LVMS.PortableRest.Signed" version="3.1.0-Beta1" />
           </group>
         </dependencies>
     </metadata>
