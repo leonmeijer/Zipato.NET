@@ -16,7 +16,7 @@ This library is under development. Currently supported:
 - Get alarm partitions, zones and ARM/DISABLE the alarm system by PIN
 - Retrieve schedules (from the Rules)
 
-This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1 Universal Apps and Windows Phone 8.1 Silverlight. So you can use this library to automation your building(s) from desktop and web applications or from Windows Universal Apps.
+This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1 Universal Apps and Windows Phone 8.1 Silverlight. So you can use this library to automate your building(s) from desktop and web applications or from Windows Universal Apps.
 
 ## How to use?
 Use the source code from this repository or download the NuGet package: [LVMS.ZipatoNet.Signed](https://www.nuget.org/packages/LVMS.ZipatoNet.Signed/). In this repo, you can find an example application named LVMS.Zipato.NET.TestClient (ConsoleApplication1).
