@@ -1,5 +1,5 @@
 # LVMS.Zipato.NET
-Unofficial open source C# helper library for communication with the Zipabox controller from Zipato. This library connects to the cloud-based API, hosted on https://my.zipato.com/zipato-web/api/ (hosted in Amazon AWS). All calls support the async/await model. The local API is not supported.
+Unofficial open source C# helper library for communication with the Zipabox controller from Zipato. This library connects to the cloud-based API, hosted on https://my.zipato.com/zipato-web/api/ (on Amazon AWS). All calls support the async/await model. The local API is not supported.
 
 According to www.zipato.com, Zipato is an interactive security and automation system based on cloud technology. You can control, customize and automate all power devices in your home, watch live video from your home and get instant alerts in case of any security issue. The controller/gateway supports various automation protocols (Z-Wave, ZigBee, KNX, 433 MHz, EnOcean).
 
@@ -16,7 +16,7 @@ This library is under development. Currently supported:
 - Get alarm partitions, zones and ARM/DISABLE the alarm system by PIN
 - Retrieve schedules (from the Rules)
 
-This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1 Universal Apps and Windows Phone 8.1 Silverlight.
+This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1 Universal Apps and Windows Phone 8.1 Silverlight. So you can use this library to automation your building(s) from desktop and web applications or from Windows Universal Apps.
 
 ## How to use?
 Use the source code from this repository or download the NuGet package: [LVMS.ZipatoNet.Signed](https://www.nuget.org/packages/LVMS.ZipatoNet.Signed/). In this repo, you can find an example application named LVMS.Zipato.NET.TestClient (ConsoleApplication1).
