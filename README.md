@@ -37,7 +37,7 @@ There are 3 supported styles:
 
 For example:
 ```
-  var lightsOn = await client.GetOnOffStateAsync(endpoint);
+  bool lightsOn = await client.GetOnOffStateAsync(endpoint);
   lightsOn = await client.GetOnOffStateAsync("Office Lights");
   lightsOn = await client.GetOnOffStateAsync(Guid.Parse("e79e83d3-6d97-49cc-89a7-cec7baf0c948"));
 ```
