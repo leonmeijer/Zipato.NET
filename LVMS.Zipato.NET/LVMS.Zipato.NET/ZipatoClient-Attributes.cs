@@ -77,7 +77,7 @@ namespace LVMS.Zipato
         /// <param name="endpointName">Endpoint name</param>
         /// <param name="newState">The new state</param>
         /// <returns>True when the request was executed succesful, otherwise False</returns>
-        public async Task<bool> SetOnOffState(string endpointName, bool newState)
+        public async Task<bool> SetOnOffStateAsync(string endpointName, bool newState)
         {
             Endpoint endpoint = await GetEndpointAsync(endpointName);
             return await SetOnOffStateAsync(endpoint, newState);

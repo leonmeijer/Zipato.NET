@@ -28,10 +28,11 @@ namespace LVMS.Zipato.TestClient
             Console.WriteLine("Connecting...");
 
             var client = new ZipatoClient();
-            await client.LoginAsync(credentials.UserName, credentials.Password);
+            var loggedIn = await client.LoginAsync(credentials.UserName, credentials.Password);
             Console.WriteLine("Connected.");
 
-            //var endpoints = await client.GetEndpointsAsync();
+            var endpoints = await client.GetEndpointsAsync();
+            
 
             var partitions = await client.GetAlarmPartitionsAsync();
             var partition = await client.GetAlarmPartitionAsync(partitions[0].Uuid);
@@ -40,6 +41,9 @@ namespace LVMS.Zipato.TestClient
             {
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
+            await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.AWAY);
+            await Task.Delay(TimeSpan.FromSeconds(5));
+            await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
 
             var alarmReady = await client.IsAlarmPartitionReady(partition.Uuid);
             if (alarmReady)
