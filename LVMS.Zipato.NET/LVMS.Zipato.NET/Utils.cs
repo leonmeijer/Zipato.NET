@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using PCLCrypto;
 
 namespace LVMS.Zipato
 {
-    internal class Utils
+    internal static class Utils
     {
         internal static string GetToken(string password, string nonce)
         {
@@ -27,6 +28,41 @@ namespace LVMS.Zipato
                 sb.Append(hash[i].ToString("x2"));
             }
             return sb.ToString();
+        }
+
+        internal static T ChangeType<T>(this object value)
+        {
+            return ChangeType<T>(value, CultureInfo.CurrentCulture);
+        }
+
+        internal static T ChangeType<T>(this object value, CultureInfo cultureInfo)
+        {
+            var toType = typeof(T);
+
+            if (value == null) return default(T);
+
+            if (value is string)
+            {
+                if (toType == typeof(Guid))
+                {
+                    return ChangeType<T>(new Guid(Convert.ToString(value, cultureInfo)), cultureInfo);
+                }
+                if ((string)value == string.Empty && toType != typeof(string))
+                {
+                    return ChangeType<T>(null, cultureInfo);
+                }
+            }
+            else
+            {
+                if (typeof(T) == typeof(string))
+                {
+                    return ChangeType<T>(Convert.ToString(value, cultureInfo), cultureInfo);
+                }
+            }
+
+            
+            return (T)Convert.ChangeType(value, toType, cultureInfo);
+            //return (T)value;
         }
     }
 }

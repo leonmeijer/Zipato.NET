@@ -30,10 +30,15 @@ namespace LVMS.Zipato.TestClient
             await client.LoginAsync(credentials.UserName, credentials.Password);
             Console.WriteLine("Connected.");
 
-            var endpoints = await client.GetEndpointsAsync();
-            
-            //await client.SendStateChangeCommandByName("Kantoorverlichting", true);
+            //var endpoints = await client.GetEndpointsAsync();
 
+            await client.SetOnOffState("Kantoorverlichting", true);
+
+            var rollruikEndpoint = await client.GetEndpointAsync("Rolluik Beneden Links");
+
+            var state = await client.GetAttributeValueAsync<int>(rollruikEndpoint, Enums.CommonAttributeNames.POSITION);
+
+            
         }
 
         /// <summary>

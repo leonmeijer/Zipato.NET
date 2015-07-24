@@ -51,12 +51,14 @@
   <ItemGroup>
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\StateChangeCommand.cs" />
+    <Compile Include="Enums\CommonAttributeNames.cs" />
     <Compile Include="Exceptions\AuthenticationFailureException.cs" />
     <Compile Include="Exceptions\CannotChangeStateException.cs" />
     <Compile Include="Exceptions\CannotInitializeSessionException.cs" />
     <Compile Include="Exceptions\RequestFailedException.cs" />
     <Compile Include="Exceptions\ZipatoException.cs" />
     <Compile Include="Model\Attribute.cs" />
+    <Compile Include="Model\AttributeValue.cs" />
     <Compile Include="Model\Endpoint.cs" />
     <Compile Include="Model\InitResponse.cs" />
     <Compile Include="Model\UserSession.cs" />

@@ -9,7 +9,7 @@ namespace LVMS.Zipato.Model
 {
     public class Endpoint
     {
-        public string Uuid {get;set;}
+        public Guid Uuid {get;set;}
         public string Link { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }

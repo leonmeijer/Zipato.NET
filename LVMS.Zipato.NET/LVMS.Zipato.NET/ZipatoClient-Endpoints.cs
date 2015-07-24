@@ -12,7 +12,7 @@ namespace LVMS.Zipato
     public partial class ZipatoClient
     {
         Endpoint[] _cachedEndpoints;
-        Dictionary<string, Endpoint> _cachedEndpoints2;
+        Dictionary<Guid, Endpoint> _cachedEndpoints2;
 
         public async Task<Endpoint[]> GetEndpointsAsync(bool allowCache = true)
         {
@@ -30,7 +30,7 @@ namespace LVMS.Zipato
             return result;
         }
 
-        public async Task<Endpoint> GetEndpointAsync(string uuid, bool allowCache = true)
+        public async Task<Endpoint> GetEndpointAsync(Guid uuid, bool allowCache = true)
         {
             CheckInitialized();
 
@@ -45,7 +45,7 @@ namespace LVMS.Zipato
             if (allowCache)
             {
                 if (_cachedEndpoints2 == null)
-                    _cachedEndpoints2 = new Dictionary<string, Endpoint>();
+                    _cachedEndpoints2 = new Dictionary<Guid, Endpoint>();
 
                 _cachedEndpoints2.Add(uuid, result);
             }
