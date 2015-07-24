@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata minClientVersion="2.8.1">
+        <id>LVMS.ZipatoNet.Signed</id>
+        <version>0.1</version>
+        <title>ZipatoNet</title>
+        <authors>Leon Meijer</authors>
+        <owners>LVM Software</owners>
+        <licenseUrl>http://choosealicense.com/licenses/mit/</licenseUrl>
+        <projectUrl>https://github.com/leonmeijer/Zipato.NET</projectUrl>        
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A *SIGNED* open source C# helper library for communication with the Zipabox controller from Zipato. It's a Portable Class Library (.NET 4.5, Windows Phone 8.1, Windows Phone Silverlight 8 and Windows 8.x).</description>
+        <releaseNotes>
+  0.1 First release.</releaseNotes>
+        <copyright>Copyright © 2015 LVM Software</copyright>
+        <tags>HttpClient, REST, Portable Class Library, Zipato, Zipabox, Zigbee, Z-Wave</tags>
+        <dependencies>
+          <group targetFramework=".NETPortable0.0-net45+sl5+wp8+win8+wpa81">
+            <dependency id="Newtonsoft.Json" version="7.0.1" />
+            <dependency id="Microsoft.Bcl" version="1.1.10" />
+            <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+            <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
+            <dependency id="Microsoft.Net.Http" version="2.2.29" />
+          </group>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="LVMS.Zipato.NET\bin\Release-Signed\LVMS.ZipatoNetLib.dll" target="lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\" />
+        <file src="LVMS.Zipato.NET\bin\Release-Signed\LVMS.ZipatoNetLib.pdb" target="lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\" />
+        <file src="LVMS.Zipato.NET\bin\Release-Signed\LVMS.ZipatoNetLib.xml" target="lib\portable-net45+sl5+wp8+win8+wpa81+MonoTouch1+MonoAndroid1\" />
+        <file src="LVMS.Zipato.NET\**\*.cs" exclude="**\obj\**\*.*" target="src" />
+    </files>
+</package>
