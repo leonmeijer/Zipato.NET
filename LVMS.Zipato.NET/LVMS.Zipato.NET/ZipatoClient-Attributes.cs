@@ -44,28 +44,16 @@ namespace LVMS.Zipato
             PrepareRequest(request);
             var result = await _httpClient.ExecuteAsync<Model.Attribute>(request);
 
+            if (_cachedAttributes == null)
+                _cachedAttributes = new Dictionary<Guid, Model.Attribute>();
+
+            if (_cachedAttributes.ContainsKey(uuid))
+                _cachedAttributes.Remove(uuid);
             if (allowCache)
             {
-                if (_cachedAttributes == null)
-                    _cachedAttributes = new Dictionary<Guid, Model.Attribute>();
-
                 _cachedAttributes.Add(uuid, result);
             }
             return result;
-        }
-
-        /// <summary>
-        /// Send a command to change the state of an endpoint. This method will seach for an endpoint
-        /// with given name. If the endpoint was found, an attribute named state is searched and finally
-        /// a command will be send to Zipato to change the state for that attribute UUID.
-        /// </summary>
-        /// <param name="endpointName">Endpoint name</param>
-        /// <param name="newState">The new state</param>
-        /// <returns>True when the request was executed succesful, otherwise False</returns>
-        public async Task<bool> SetOnOffState(string endpointName, bool newState)
-        {
-            Endpoint endpoint = await GetEndpointAsync(endpointName);
-            return await SendOnOffStateAsync(endpoint, newState);
         }
 
         /// <summary>
@@ -82,19 +70,104 @@ namespace LVMS.Zipato
         }
 
         /// <summary>
+        /// Send a command to change the state of an endpoint. This method will seach for an endpoint
+        /// with given name. If the endpoint was found, an attribute named state is searched and finally
+        /// a command will be send to Zipato to change the state for that attribute UUID.
+        /// </summary>
+        /// <param name="endpointName">Endpoint name</param>
+        /// <param name="newState">The new state</param>
+        /// <returns>True when the request was executed succesful, otherwise False</returns>
+        public async Task<bool> SetOnOffState(string endpointName, bool newState)
+        {
+            Endpoint endpoint = await GetEndpointAsync(endpointName);
+            return await SetOnOffStateAsync(endpoint, newState);
+        }
+
+        /// <summary>
+        /// Send a command to change the state of an endpoint.
+        /// </summary>
+        /// <param name="attributeUuid">Attribute UUID</param>
+        /// <param name="newState">The new state</param>
+        /// <returns>True when the request was executed succesful, otherwise False</returns>
+        public async Task<bool> SetOnOffStateAsync(Guid attributeUuid, bool newState)
+        {
+            CheckInitialized();
+
+            // Send a PUT request with 'true' or 'false' as plain-text in the body.
+            // Had to modify PortableRest package to support this.
+            var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Put);
+            request.ContentType = ContentTypes.PlainText;
+            PrepareRequest(request);
+            request.AddParameter(newState.ToString().ToLowerInvariant());
+            var returnValue = await _httpClient.ExecuteAsync<object>(request);
+            return true;
+        }
+
+        /// <summary>
         /// Send a command to change the state of an endpoint. This method will search for an attribute
         /// named state in the endpoint's attributes list and will use that attribute UUID.
         /// </summary>
         /// <param name="endpoint">Endpoint</param>
         /// <param name="newState">The new state</param>
         /// <returns>True when the request was executed succesful, otherwise False</returns>
-        public async Task<bool> SendOnOffStateAsync(Endpoint endpoint, bool newState)
+        public async Task<bool> SetOnOffStateAsync(Endpoint endpoint, bool newState)
         {
             CheckInitialized();           
 
             Model.Attribute stateAttribute = await GetAttributeAsync(endpoint, Enums.CommonAttributeNames.STATE);
-            return await SendOnOffStateAsync(stateAttribute.Uuid, newState);
+            return await SetOnOffStateAsync(stateAttribute.Uuid, newState);
         }
+
+
+        /// <summary>
+        /// Send a command to change the position of an endpoint. This method will seach for an endpoint
+        /// with given name. If the endpoint was found, an attribute named state is searched and finally
+        /// a command will be send to Zipato to change the state for that attribute UUID.
+        /// </summary>
+        /// <param name="endpointName">Endpoint name</param>
+        /// <param name="position">The new position</param>
+        /// <returns>True when the request was executed succesful, otherwise False</returns>
+        public async Task<bool> SetPositionAsync(string endpointName, int position)
+        {
+            Endpoint endpoint = await GetEndpointAsync(endpointName);
+            return await SetPositionAsync(endpoint, position);
+        }
+
+        /// <summary>
+        /// Send a command to change the position of an endpoint.
+        /// </summary>
+        /// <param name="attributeUuid">Attribute UUID</param>
+        /// <param name="position">The new position</param>
+        /// <returns>True when the request was executed succesful, otherwise False</returns>
+        public async Task<bool> SetPositionAsync(Guid attributeUuid, int position)
+        {
+            CheckInitialized();
+
+            // Send a PUT request as plain-text in the body.
+            // Had to modify PortableRest package to support this.
+            var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Put);
+            request.ContentType = ContentTypes.PlainText;
+            PrepareRequest(request);
+            request.AddParameter(position.ToString().ToLowerInvariant());
+            var returnValue = await _httpClient.ExecuteAsync<object>(request);
+            return true;
+        }
+
+        /// <summary>
+        /// Send a command to change the position of an endpoint. This method will search for an attribute
+        /// named POSITION in the endpoint's attributes list and will use that attribute UUID.
+        /// </summary>
+        /// <param name="endpoint">Endpoint</param>
+        /// <param name="position">The new position</param>
+        /// <returns>True when the request was executed succesful, otherwise False</returns>
+        public async Task<bool> SetPositionAsync(Endpoint endpoint, int position)
+        {
+            CheckInitialized();
+
+            Model.Attribute stateAttribute = await GetAttributeAsync(endpoint, Enums.CommonAttributeNames.POSITION);
+            return await SetPositionAsync(stateAttribute.Uuid, position);
+        }
+
 
         /// <summary>
         /// Finds an attribute with a given name on an endpoint
@@ -128,25 +201,7 @@ namespace LVMS.Zipato
             return stateAttribute;
         }
 
-        /// <summary>
-        /// Send a command to change the state of an endpoint.
-        /// </summary>
-        /// <param name="attributeUuid">Attribute UUID</param>
-        /// <param name="newState">The new state</param>
-        /// <returns>True when the request was executed succesful, otherwise False</returns>
-        public async Task<bool> SendOnOffStateAsync(Guid attributeUuid, bool newState)
-        {
-            CheckInitialized();
-
-            // Send a PUT request with 'true' or 'false' as plain-text in the body.
-            // Had to modify PortableRest package to support this.
-            var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Put);
-            request.ContentType = ContentTypes.PlainText;
-            PrepareRequest(request);            
-            request.AddParameter(newState.ToString().ToLowerInvariant());
-            var returnValue = await _httpClient.ExecuteAsync<object>(request);
-            return true;
-        }
+        
 
         /// <summary>
         /// Get the ON/OFF state of an endpoint
@@ -242,6 +297,33 @@ namespace LVMS.Zipato
             CheckInitialized();
             var attribute = await GetAttributeAsync(endpoint, attributeName);
             return await GetAttributeValueAsync<T>(attribute);
+        }
+
+        /// <summary>
+        /// Get the value of an attribute
+        /// </summary>
+        /// <param name="endpoint">The endpoint to retrieve the attribute from</param>
+        /// <param name="attribute">The attribute to read</param>
+        /// <returns>The value of the attribute, converted to T</returns>
+        public async Task<T> GetAttributeValueAsync<T>(string endpointName, Enums.CommonAttributeNames attribute)
+        {
+            CheckInitialized();
+
+            Endpoint endpoint = await GetEndpointAsync(endpointName);
+            return await GetAttributeValueAsync<T>(endpoint, attribute);
+        }
+
+        /// <summary>
+        /// Get the value of an attribute
+        /// </summary>
+        /// <param name="endpoint">The endpoint to retrieve the attribute from</param>
+        /// <param name="attribute">The attribute to read</param>
+        /// <returns>The value of the attribute, converted to T</returns>
+        public async Task<T> GetAttributeValueAsync<T>(string endpointName, string attributeName)
+        {
+            CheckInitialized();
+            Endpoint endpoint = await GetEndpointAsync(endpointName);
+            return await GetAttributeValueAsync<T>(endpoint, attributeName);
         }
     }
 }

@@ -32,12 +32,21 @@ namespace LVMS.Zipato.TestClient
 
             //var endpoints = await client.GetEndpointsAsync();
 
-            await client.SetOnOffState("Kantoorverlichting", true);
+            var partitions = await client.GetAlarmPartitionsAsync();
+            var partition = await client.GetAlarmPartitionAsync(partitions[0].Uuid);
+            var zones = await client.IsAlarmPartitionReady(partition.Uuid);
 
-            var rollruikEndpoint = await client.GetEndpointAsync("Rolluik Beneden Links");
+            //await client.SetOnOffState("Kantoorverlichting", true);
 
-            var state = await client.GetAttributeValueAsync<int>(rollruikEndpoint, Enums.CommonAttributeNames.POSITION);
+            //var state = await client.GetAttributeValueAsync<int>("Rolluik Zolder", Enums.CommonAttributeNames.POSITION);
+            //await client.SetPositionAsync("Rolluik Zolder", 0);
 
+            //var rollruikEndpoint = await client.GetEndpointAsync("Rolluik Beneden Links");
+
+            //
+
+            
+            //var rooms = await client.GetContactsAsync();
             
         }
 

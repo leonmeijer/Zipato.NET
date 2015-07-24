@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace LVMS.Zipato.Model
 {
@@ -16,5 +12,6 @@ namespace LVMS.Zipato.Model
         public string Room { get; set; }
         public string Order { get; set; }
         public string[] Tags { get; set; }
+        public AttributeValue Value { get; set; }
     }
 }

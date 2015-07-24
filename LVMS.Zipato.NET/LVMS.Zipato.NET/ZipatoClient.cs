@@ -32,9 +32,25 @@ namespace LVMS.Zipato
             ApiUrl = apiUrl;
         }
 
-        public Task<bool> CheckConnection()
+        public async Task<bool> CheckConnection()
         {
-            throw new NotImplementedException();
+            if (!_initialized)
+                return false;
+            try
+            {
+                var zipabox = await GetZipaboxInfo();
+                return zipabox.Online;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public void CheckInitialized()
+        {
+            if (!_initialized)
+                throw new ZipatoException();
         }
 
         public async Task<bool> LoginAsync(string userNameEmail, string password)
@@ -70,11 +86,21 @@ namespace LVMS.Zipato
             return true;
         }
 
-        public void CheckInitialized()
+        public async Task<Zipabox[]> GetZipaboxesInfo()
         {
-            if (!_initialized)
-                throw new ZipatoException();
+            CheckInitialized();
+
+            var request = new RestRequest("multibox/list", HttpMethod.Get);
+            PrepareRequest(request);
+            return await _httpClient.ExecuteAsync<Zipabox[]>(request);
         }
+
+        public async Task<Zipabox> GetZipaboxInfo()
+        {
+            var boxes = await GetZipaboxesInfo();
+            return boxes.Length == 0 ? null : boxes[0];
+        }
+
 
         protected virtual void PrepareRequest (RestRequest request)
         {

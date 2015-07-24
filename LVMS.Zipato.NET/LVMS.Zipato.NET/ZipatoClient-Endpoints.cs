@@ -11,22 +11,22 @@ namespace LVMS.Zipato
 {
     public partial class ZipatoClient
     {
-        Endpoint[] _cachedEndpoints;
-        Dictionary<Guid, Endpoint> _cachedEndpoints2;
+        Endpoint[] _cachedEndpointsList;
+        Dictionary<Guid, Endpoint> _cachedEndpoints;
 
         public async Task<Endpoint[]> GetEndpointsAsync(bool allowCache = true)
         {
             CheckInitialized();
 
-            if (allowCache && _cachedEndpoints != null)
-                return _cachedEndpoints;
+            if (allowCache && _cachedEndpointsList != null)
+                return _cachedEndpointsList;
 
             var request = new RestRequest("endpoints", HttpMethod.Get);
             PrepareRequest(request);
             var result = await _httpClient.ExecuteAsync<Endpoint[]>(request);
 
             if (allowCache)
-                _cachedEndpoints = result;
+                _cachedEndpointsList = result;
             return result;
         }
 
@@ -34,20 +34,22 @@ namespace LVMS.Zipato
         {
             CheckInitialized();
 
-            if (allowCache && _cachedEndpoints2 != null && _cachedEndpoints2.ContainsKey(uuid))
-                return _cachedEndpoints2[uuid];
+            if (allowCache && _cachedEndpoints != null && _cachedEndpoints.ContainsKey(uuid))
+                return _cachedEndpoints[uuid];
 
             var request = new RestRequest("endpoints/" + uuid + "?attributes=true", HttpMethod.Get);
             
             PrepareRequest(request);
             var result = await _httpClient.ExecuteAsync<Endpoint>(request);
 
+            if (_cachedEndpoints == null)
+                _cachedEndpoints = new Dictionary<Guid, Endpoint>();
+
+            if (_cachedEndpoints.ContainsKey(uuid))
+                _cachedEndpoints.Remove(uuid);
             if (allowCache)
             {
-                if (_cachedEndpoints2 == null)
-                    _cachedEndpoints2 = new Dictionary<Guid, Endpoint>();
-
-                _cachedEndpoints2.Add(uuid, result);
+                _cachedEndpoints.Add(uuid, result);
             }
             return result;
         }
