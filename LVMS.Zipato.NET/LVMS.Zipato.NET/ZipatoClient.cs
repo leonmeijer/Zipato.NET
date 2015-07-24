@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using LVMS.Zipato.Exceptions;
 using LVMS.Zipato.Interfaces;
 using LVMS.Zipato.Model;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PortableRest;
 
 namespace LVMS.Zipato
@@ -58,7 +60,9 @@ namespace LVMS.Zipato
             // First call user/init which returns us a nonce
             _httpClient = new RestClient();
             _httpClient.BaseUrl = ApiUrl;
-            
+            var jsonSerializerSettings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+            _httpClient.JsonSerializerSettings = jsonSerializerSettings;
+
             var initRequest = new RestRequest("user/init", HttpMethod.Get);
             
             var initResult = await _httpClient.ExecuteAsync<InitResponse>(initRequest);

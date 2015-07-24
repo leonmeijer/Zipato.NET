@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LVMS.Zipato;
+using LVMS.Zipato.Model;
 
 namespace LVMS.Zipato.TestClient
 {
@@ -34,8 +35,19 @@ namespace LVMS.Zipato.TestClient
 
             var partitions = await client.GetAlarmPartitionsAsync();
             var partition = await client.GetAlarmPartitionAsync(partitions[0].Uuid);
-            var zones = await client.IsAlarmPartitionReady(partition.Uuid);
 
+            while (!await client.IsAlarmPartitionReady(partition.Uuid))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
+
+            var alarmReady = await client.IsAlarmPartitionReady(partition.Uuid);
+            if (alarmReady)
+            {
+                await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.AWAY);
+                await Task.Delay(TimeSpan.FromSeconds(5));
+                await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
+            }
             //await client.SetOnOffState("Kantoorverlichting", true);
 
             //var state = await client.GetAttributeValueAsync<int>("Rolluik Zolder", Enums.CommonAttributeNames.POSITION);

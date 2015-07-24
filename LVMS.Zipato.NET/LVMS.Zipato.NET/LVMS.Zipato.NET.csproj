@@ -51,15 +51,21 @@
   <ItemGroup>
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\StateChangeCommand.cs" />
+    <Compile Include="Enums\AlarmArmMode.cs" />
     <Compile Include="Enums\CommonAttributeNames.cs" />
     <Compile Include="Exceptions\AuthenticationFailureException.cs" />
     <Compile Include="Exceptions\CannotChangeStateException.cs" />
+    <Compile Include="Exceptions\CannotEstablishSecuritySessionException.cs" />
     <Compile Include="Exceptions\CannotInitializeSessionException.cs" />
+    <Compile Include="Exceptions\CannotSetAlarmStateException.cs" />
+    <Compile Include="Exceptions\CannotSignInAlarmSystemWithPINException.cs" />
     <Compile Include="Exceptions\RequestFailedException.cs" />
     <Compile Include="Exceptions\ZipatoException.cs" />
     <Compile Include="Model\AlarmConfig.cs" />
     <Compile Include="Model\AlarmControl.cs" />
     <Compile Include="Model\AlarmPartition.cs" />
+    <Compile Include="Model\AlarmRequest.cs" />
+    <Compile Include="Model\AlarmRequestResponse.cs" />
     <Compile Include="Model\AlarmState.cs" />
     <Compile Include="Model\AlarmZone.cs" />
     <Compile Include="Model\AlarmZoneStatus.cs" />
@@ -80,11 +86,14 @@
     <Compile Include="Model\SceneSettings.cs" />
     <Compile Include="Model\Schedule.cs" />
     <Compile Include="Model\ScheduleConfig.cs" />
+    <Compile Include="Model\SecurityResponse.cs" />
+    <Compile Include="Model\SecurityUpdateItem.cs" />
     <Compile Include="Model\Thermostat.cs" />
     <Compile Include="Model\UserSession.cs" />
     <Compile Include="Model\VoiceReport.cs" />
     <Compile Include="Model\Zipabox.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ZipatoClient-Security.cs" />
     <Compile Include="ZipatoClient-Attributes.cs" />
     <Compile Include="ZipatoClient-Meteo.cs" />
     <Compile Include="ZipatoClient-Contacts.cs" />

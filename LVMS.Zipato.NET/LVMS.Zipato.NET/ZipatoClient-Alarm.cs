@@ -132,5 +132,57 @@ namespace LVMS.Zipato
             var alarmZoneStatus = await GetAlarmZonesWithStatusesAsync(partitionUuid, allowCache);
             return alarmZoneStatus.All(a => a.Status.Ready);
         }
+        public async Task<bool> SetAlarmModeAsync(AlarmPartition partition, string pinCode, Enums.AlarmArmMode newStatus, string secureSessionId = null)
+        {
+            return await SetAlarmModeAsync(partition.Uuid, pinCode, newStatus, secureSessionId);
+        }
+
+        public async Task<bool> SetAlarmModeAsync(Guid paritionUuid, string pinCode, Enums.AlarmArmMode newStatus, string secureSessionId = null,
+            bool raiseExceptionWhenNotSuccesful = true)
+        {
+            CheckInitialized();
+
+            if (secureSessionId == null)
+            {
+                var session = await InitializeSecuritySessionAsync();
+                if (!session.Success)
+                    throw new Exceptions.CannotEstablishSecuritySessionException(session.Error);
+
+                var pinLoginResponse = await LoginAlarmWithPinAsync(session.Response.SecureSessionId,
+                    session.Response.Salt,
+                    session.Response.Nonce, pinCode);
+                if (!pinLoginResponse.Success || !pinLoginResponse.Response.Success)
+                    throw new Exceptions.CannotSignInAlarmSystemWithPINException(pinLoginResponse.Response.Error);
+                secureSessionId = pinLoginResponse.Response.SecureSessionId;
+            }
+
+            var alarmRequest = new AlarmRequest()
+            {
+                ArmMode = Enum.GetName(typeof(Enums.AlarmArmMode), newStatus),
+                SecureSessionId = secureSessionId
+            };            
+
+            var request = new RestRequest("alarm/partitions/" + paritionUuid + "/setMode", HttpMethod.Post);
+            PrepareRequest(request);
+            request.ContentType = ContentTypes.Json;
+            request.AddParameter(alarmRequest);
+            var retVal = await _httpClient.SendAsync<AlarmRequestResponse>(request);            
+
+            if (!retVal.HttpResponseMessage.IsSuccessStatusCode)
+            {
+                if (raiseExceptionWhenNotSuccesful)
+                    throw new Exceptions.CannotSetAlarmStateException("Server returned: " + retVal.HttpResponseMessage.StatusCode);
+                return false;
+            }
+
+            if (retVal.Content.Success)
+                return true;
+            else
+            {
+                if (raiseExceptionWhenNotSuccesful)
+                    throw new Exceptions.CannotSetAlarmStateException(retVal.Content.Error);
+                return false;
+            }
+        }
     }
 }
