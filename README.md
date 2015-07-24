@@ -36,12 +36,35 @@ There are 3 supported styles:
 - Use the UUID, unique GUIDs within the Zipato system
 
 For example:
-
+```
   var lightsOn = await client.GetOnOffStateAsync(endpoint);
   lightsOn = await client.GetOnOffStateAsync("Office Lights");
   lightsOn = await client.GetOnOffStateAsync(Guid.Parse("e79e83d3-6d97-49cc-89a7-cec7baf0c948"));
-
+```
 To set the new state of an device, call SetOnOffStateAsync. For example, to turn on a lamp:
+  ```
   await client.SetOnOffStateAsync("Office Lights", true);
-To open a roller shuter half way:
+  ```
+To open a roller shutter half way:
+```
   await client.SetPositionAsync("Bedroom shutter", 50);
+```
+
+The following code retrieves a list of security alarm partitions, takes the first partition, waits until the partition is ready (i.e. no movement detected by motion sensors), arms the alarm and disarms the alarm 5 seconds later.
+
+```
+var partitions = await client.GetAlarmPartitionsAsync();
+var partition = await client.GetAlarmPartitionAsync(partitions[0].Uuid);
+
+while (!await client.IsAlarmPartitionReady(partition.Uuid))
+{
+	await Task.Delay(TimeSpan.FromSeconds(5));
+}
+await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.AWAY);
+await Task.Delay(TimeSpan.FromSeconds(5));
+await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
+```
+
+## Contributions
+
+Contributions are welcome. Fork this repository and send a pull request if you have something useful to add.
