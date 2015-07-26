@@ -22,7 +22,7 @@ This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1
 Use the source code from this repository or download the NuGet package: [LVMS.ZipatoNet.Signed](https://www.nuget.org/packages/LVMS.ZipatoNet.Signed/). In this repo, you can find an example application named LVMS.Zipato.NET.TestClient (ConsoleApplication1).
 	
 	var client = new ZipatoClient();
-	var loggedIn = await client.LoginAsync(credentials.UserName, credentials.Password);
+	bool loggedIn = await client.LoginAsync(credentials.UserName, credentials.Password);
 	
 To retrieve a list of endpoints:	
 
