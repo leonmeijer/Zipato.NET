@@ -50,7 +50,7 @@ To open a roller shutter half way:
 ```
   await client.SetPositionAsync("Bedroom shutter", 50);
 ```
-To get a list of endpoints that you can turn on or off (because some devices such as a power strip have multiple endpoints):
+To get a list of endpoints that you can turn on or off (because some devices such as a power strips have multiple endpoints):
 ```
   var onOffEndpoints = await client.GetEndpointsWithOnOffAsync();
 ```
