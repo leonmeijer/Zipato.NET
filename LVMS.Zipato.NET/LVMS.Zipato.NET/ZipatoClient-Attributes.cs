@@ -13,6 +13,8 @@ namespace LVMS.Zipato
     {
         Model.Attribute[] _cachedAttributesList;
         Dictionary<Guid, Model.Attribute> _cachedAttributes;
+        bool _cachedListIncludesAttributes;
+
         public async Task<Model.Attribute[]> GetAttributesAsync(bool allowCache = true)
         {
             CheckInitialized();
@@ -28,6 +30,27 @@ namespace LVMS.Zipato
             if (allowCache)
             {
                 _cachedAttributesList = result;
+                _cachedListIncludesAttributes = false;
+            }
+            return result;
+        }
+
+        public async Task<Model.Attribute[]> GetAttributesFullAsync(bool allowCache = true)
+        {
+            CheckInitialized();
+
+            if (allowCache && _cachedAttributesList != null && _cachedListIncludesAttributes)
+                return _cachedAttributesList;
+
+            var request = new RestRequest("attributes/full?full=true", HttpMethod.Get);
+
+            PrepareRequest(request);
+            var result = await _httpClient.ExecuteAsync<Model.Attribute[]>(request);
+
+            if (allowCache)
+            {
+                _cachedAttributesList = result;
+                _cachedListIncludesAttributes = true;
             }
             return result;
         }
@@ -62,9 +85,9 @@ namespace LVMS.Zipato
         /// </summary>
         /// <param name="endpointName">Endpoint name</param>
         /// <returns>An Endpoint instance</returns>
-        public async Task<Endpoint> GetEndpointAsync(string endpointName)
+        public async Task<Endpoint> GetEndpointAsync(string endpointName, Enums.EndpointGetModes loadMode = Enums.EndpointGetModes.InlcudeEndpointInfoOnly)
         {
-            var endpoints = await GetEndpointsAsync(true);
+            var endpoints = await GetEndpointsAsync(loadMode);
             var endpoint = endpoints.First(e => e.Name == endpointName);
             return endpoint;
         }
@@ -242,6 +265,16 @@ namespace LVMS.Zipato
             PrepareRequest(request);
             var result = await _httpClient.ExecuteAsync<Model.AttributeValue>(request);
             return bool.Parse(result.Value);
+        }
+
+        public async Task<Model.Attribute[]> GetAttributeValuesAsync()
+        {
+            CheckInitialized();
+
+            var request = new RestRequest("attributes/values", HttpMethod.Get);
+
+            PrepareRequest(request);
+            return await _httpClient.ExecuteAsync<Model.Attribute[]>(request);
         }
 
         /// <summary>

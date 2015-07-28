@@ -53,6 +53,8 @@
     <Compile Include="Commands\StateChangeCommand.cs" />
     <Compile Include="Enums\AlarmArmMode.cs" />
     <Compile Include="Enums\CommonAttributeNames.cs" />
+    <Compile Include="Enums\DeviceGetModes.cs" />
+    <Compile Include="Enums\EndpointGetModes.cs" />
     <Compile Include="Exceptions\AuthenticationFailureException.cs" />
     <Compile Include="Exceptions\CannotChangeStateException.cs" />
     <Compile Include="Exceptions\CannotEstablishSecuritySessionException.cs" />
@@ -70,9 +72,14 @@
     <Compile Include="Model\AlarmZone.cs" />
     <Compile Include="Model\AlarmZoneStatus.cs" />
     <Compile Include="Model\Attribute.cs" />
+    <Compile Include="Model\AttributeConfig.cs" />
+    <Compile Include="Model\AttributeDefinition.cs" />
     <Compile Include="Model\AttributeValue.cs" />
     <Compile Include="Model\BurglarPartition.cs" />
+    <Compile Include="Model\ClusterEndpoint.cs" />
     <Compile Include="Model\Contact.cs" />
+    <Compile Include="Model\Device.cs" />
+    <Compile Include="Model\DeviceState.cs" />
     <Compile Include="Model\EmailReport.cs" />
     <Compile Include="Model\Endpoint.cs" />
     <Compile Include="Model\InitResponse.cs" />
@@ -80,6 +87,7 @@
     <Compile Include="Model\MeteoCondition.cs" />
     <Compile Include="Model\MobilityPartition.cs" />
     <Compile Include="Model\Mode.cs" />
+    <Compile Include="Model\Network.cs" />
     <Compile Include="Model\Operation.cs" />
     <Compile Include="Model\Room.cs" />
     <Compile Include="Model\Scene.cs" />
@@ -89,10 +97,12 @@
     <Compile Include="Model\SecurityResponse.cs" />
     <Compile Include="Model\SecurityUpdateItem.cs" />
     <Compile Include="Model\Thermostat.cs" />
+    <Compile Include="Model\UIType.cs" />
     <Compile Include="Model\UserSession.cs" />
     <Compile Include="Model\VoiceReport.cs" />
     <Compile Include="Model\Zipabox.cs" />
     <Compile Include="Utils.cs" />
+    <Compile Include="ZipatoClient-Devices.cs" />
     <Compile Include="ZipatoClient-Security.cs" />
     <Compile Include="ZipatoClient-Attributes.cs" />
     <Compile Include="ZipatoClient-Meteo.cs" />

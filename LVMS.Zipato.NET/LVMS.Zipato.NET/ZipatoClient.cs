@@ -20,6 +20,8 @@ namespace LVMS.Zipato
         private string _jessionid;
         private bool _initialized;
 
+        internal const string OnOffCluster = "com.zipato.cluster.OnOff";
+
         public ZipatoClient()
         {
 
