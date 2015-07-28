@@ -8,7 +8,8 @@ namespace LVMS.Zipato.Enums
 {
     public enum EndpointGetModes
     {
-        InlcudeEndpointInfoOnly,        
+        None,
+        IncludeEndpointInfoOnly,        
         IncludeFullAttributes,
         IncludeFullAttributesWithValues
     }

@@ -82,6 +82,7 @@
     <Compile Include="Model\DeviceState.cs" />
     <Compile Include="Model\EmailReport.cs" />
     <Compile Include="Model\Endpoint.cs" />
+    <Compile Include="Model\EndpointConfig.cs" />
     <Compile Include="Model\InitResponse.cs" />
     <Compile Include="Model\Meteo.cs" />
     <Compile Include="Model\MeteoCondition.cs" />

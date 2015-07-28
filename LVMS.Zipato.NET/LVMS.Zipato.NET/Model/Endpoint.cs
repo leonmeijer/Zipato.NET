@@ -17,7 +17,7 @@ namespace LVMS.Zipato.Model
         [JsonProperty("attributes")]
         public List<Attribute> Attributes { get; set; }
         public bool ShowIcon { get; set; }
-
+        public EndpointConfig Config { get; set; }
     }
 
     

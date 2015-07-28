@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using LVMS.Zipato.Enums;
 using LVMS.Zipato.Model;
 using PortableRest;
 using Attribute = LVMS.Zipato.Model.Attribute;
@@ -16,9 +17,12 @@ namespace LVMS.Zipato
         Endpoint[] _cachedEndpointsList;
         Dictionary<Guid, Endpoint> _cachedEndpoints;
 
-        public async Task<Endpoint[]> GetEndpointsAsync(Enums.EndpointGetModes loadMode = Enums.EndpointGetModes.InlcudeEndpointInfoOnly, bool allowCache = true)
+        public async Task<Endpoint[]> GetEndpointsAsync(Enums.EndpointGetModes loadMode = Enums.EndpointGetModes.IncludeEndpointInfoOnly, bool allowCache = true)
         {
             CheckInitialized();
+
+            if (loadMode == EndpointGetModes.None)
+                return null;
 
             if (allowCache && _cachedEndpointsList != null)
                 return _cachedEndpointsList;
@@ -90,7 +94,19 @@ namespace LVMS.Zipato
             return result;
         }
 
-        public async Task<IEnumerable<Endpoint>> GetEndpointsWithOnOffAsync(bool includeValues = false, bool allowCache = true)
+        public async Task<Endpoint> GetEndpointOnlyConfigAsync(Guid uuid)
+        {
+            CheckInitialized();
+
+            var request = new RestRequest("endpoints/" + uuid + "?config=true", HttpMethod.Get);
+
+            PrepareRequest(request);
+            var result = await _httpClient.ExecuteAsync<Endpoint>(request);
+           
+            return result;
+        }
+
+        public async Task<IEnumerable<Endpoint>> GetEndpointsWithOnOffAsync(bool includeValues = false, bool hideZipaboxInternalEndpoints = true, bool hideHidden = false, bool allowCache = true)
         {
             CheckInitialized();
 
@@ -104,14 +120,40 @@ namespace LVMS.Zipato
                 return null;
 
             var onOffEndpoints =
-                endpoints.Where(e => e.Attributes != null  && e.Attributes.Any(a => a.Config != null && !a.Config.Hidden &&  a.Definition != null &&
-                                                                                   CultureInfo.CurrentCulture
-                                                                                       .CompareInfo.IndexOf(
-                                                                                           a.Definition.Cluster.Trim(),
-                                                                                           ZipatoClient.OnOffCluster,
-                                                                                           CompareOptions.IgnoreCase) >=
-                                                                                   0));
-            return onOffEndpoints;
+                endpoints.Where(e => e.Attributes != null && e.Attributes.Any(a => a.Config != null && !a.Config.Hidden && a.Definition != null &&
+                                                                                  CultureInfo.CurrentCulture
+                                                                                      .CompareInfo.IndexOf(
+                                                                                          a.Definition.Cluster.Trim(),
+                                                                                          ZipatoClient.OnOffCluster,
+                                                                                          CompareOptions.IgnoreCase) >=
+                                                                                  0)).ToArray();
+
+
+            if (hideZipaboxInternalEndpoints)
+            {
+                onOffEndpoints = onOffEndpoints.Where(e => !e.Attributes.Any(a => a.Device != null &&
+                                                                                  CultureInfo.CurrentCulture
+                                                                                      .CompareInfo.IndexOf(
+                                                                                          a.Device.Name.Trim(),
+                                                                                          ZipatoClient
+                                                                                              .ZipaboxInternalName,
+                                                                                          CompareOptions.IgnoreCase) >=
+                                                                                  0)).ToArray();
+            }
+
+            // IMPORTANT: I cannot find a way to retrieve of all endpoints that includes information about an endpoint being hidden.
+            // To know if an endpoint is hidden, I need to call /endpoints/uuid for each endpoint which is expensive.
+            if (hideHidden)
+            {
+                await Task.WhenAll(onOffEndpoints.Select(SetEndpointVisibility));
+            }
+            return onOffEndpoints.Where(e=> !e.Config.Hidden);
+        }
+
+        private async Task SetEndpointVisibility(Endpoint endpoint)
+        {
+            var newLoadedEndpoint = await GetEndpointOnlyConfigAsync(endpoint.Uuid);
+            endpoint.Config = newLoadedEndpoint.Config;
         }
     }
 }

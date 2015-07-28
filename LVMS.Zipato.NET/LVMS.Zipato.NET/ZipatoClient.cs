@@ -21,6 +21,8 @@ namespace LVMS.Zipato
         private bool _initialized;
 
         internal const string OnOffCluster = "com.zipato.cluster.OnOff";
+        internal const string EndpointTypeActuator = "actuator";
+        internal const string ZipaboxInternalName = "Internal device";
 
         public ZipatoClient()
         {
@@ -51,6 +53,9 @@ namespace LVMS.Zipato
             }
         }
 
+        /// <summary>
+        /// Checks whether or not this library and the connection with Zipato is initialized.
+        /// </summary>
         public void CheckInitialized()
         {
             if (!_initialized)

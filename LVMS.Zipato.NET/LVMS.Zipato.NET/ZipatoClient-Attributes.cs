@@ -85,7 +85,7 @@ namespace LVMS.Zipato
         /// </summary>
         /// <param name="endpointName">Endpoint name</param>
         /// <returns>An Endpoint instance</returns>
-        public async Task<Endpoint> GetEndpointAsync(string endpointName, Enums.EndpointGetModes loadMode = Enums.EndpointGetModes.InlcudeEndpointInfoOnly)
+        public async Task<Endpoint> GetEndpointAsync(string endpointName, Enums.EndpointGetModes loadMode = Enums.EndpointGetModes.IncludeEndpointInfoOnly)
         {
             var endpoints = await GetEndpointsAsync(loadMode);
             var endpoint = endpoints.First(e => e.Name == endpointName);

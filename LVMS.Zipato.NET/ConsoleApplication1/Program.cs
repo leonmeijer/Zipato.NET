@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using LVMS.Zipato;
+using LVMS.Zipato.Enums;
 using LVMS.Zipato.Model;
 
 namespace LVMS.Zipato.TestClient
@@ -31,11 +33,16 @@ namespace LVMS.Zipato.TestClient
             var loggedIn = await client.LoginAsync(credentials.UserName, credentials.Password);
             Console.WriteLine("Connected.");
 
-            var endpoints = await client.GetEndpointsAsync();
+            //var devices = await client.GetDevicesAsync(true, EndpointGetModes.IncludeFullAttributes);
+
+
+            var onOffEndpoints = await client.GetEndpointsWithOnOffAsync();
             
 
             var partitions = await client.GetAlarmPartitionsAsync();
             var partition = await client.GetAlarmPartitionAsync(partitions[0].Uuid);
+
+            await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
 
             while (!await client.IsAlarmPartitionReady(partition.Uuid))
             {
