@@ -16,7 +16,7 @@ namespace LVMS.Zipato.Interfaces
         /// <param name="userNameEmail">Username or E-mail address</param>
         /// <param name="password">Plain-text password. Gets SHA1-encrypted before being transmitted over the wire.</param>
         /// <returns><c>true</c> if success, <c>false</c> if authentication failed.</returns>
-        Task<bool> LoginAsync(string userNameEmail, string password);
+        Task LoginAsync(string userNameEmail, string password);
         Task<bool> CheckConnection();
     }
 }

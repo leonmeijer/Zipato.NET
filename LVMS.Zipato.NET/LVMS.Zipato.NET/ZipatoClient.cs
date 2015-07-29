@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using LVMS.Zipato.Exceptions;
 using LVMS.Zipato.Interfaces;
@@ -62,7 +58,12 @@ namespace LVMS.Zipato
                 throw new ZipatoException();
         }
 
-        public async Task<bool> LoginAsync(string userNameEmail, string password)
+        /// <summary>
+        /// Authenticate this client with the Zipato API REST service.
+        /// </summary>
+        /// <param name="userNameEmail">User name (typically the email address you use on my.zipato.com)</param>
+        /// <param name="password">Password</param>
+        public async Task LoginAsync(string userNameEmail, string password)
         {
             // First call user/init which returns us a nonce
             _httpClient = new RestClient();
@@ -93,8 +94,6 @@ namespace LVMS.Zipato
                 throw new AuthenticationFailureException(loginResult.Error);
 
             _initialized = true;
-
-            return true;
         }
 
         public async Task<Zipabox[]> GetZipaboxesInfo()
@@ -111,7 +110,6 @@ namespace LVMS.Zipato
             var boxes = await GetZipaboxesInfo();
             return boxes.Length == 0 ? null : boxes[0];
         }
-
 
         protected virtual void PrepareRequest (RestRequest request)
         {

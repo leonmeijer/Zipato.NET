@@ -26,14 +26,14 @@ namespace LVMS.Zipato.TestClient
         {
             Console.WriteLine("Zipato API Test Client");
 
-            var credentials = GetCredentials();           
+            var credentials = GetCredentials();
             Console.WriteLine("Connecting...");
 
             var client = new ZipatoClient();
-            var loggedIn = await client.LoginAsync(credentials.UserName, credentials.Password);
+            await client.LoginAsync(credentials.UserName, credentials.Password);
             Console.WriteLine("Connected.");
 
-            //var devices = await client.GetDevicesAsync(true, EndpointGetModes.IncludeFullAttributes);
+            var offlineDevices = await client.GetDevicesOfflineAsync();
 
 
             var onOffEndpoints = await client.GetEndpointsWithOnOffAsync();
