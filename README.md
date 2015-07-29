@@ -70,6 +70,11 @@ await Task.Delay(TimeSpan.FromSeconds(5));
 await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
 ```
 
+To learn about devices being offline
+```
+var offlineDevices = await client.GetDevicesOfflineAsync();
+```
+
 ## Contributions
 
 Contributions are welcome. Fork this repository and send a pull request if you have something useful to add.
