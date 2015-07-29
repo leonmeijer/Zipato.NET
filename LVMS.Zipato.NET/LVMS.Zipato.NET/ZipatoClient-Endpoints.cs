@@ -119,8 +119,9 @@ namespace LVMS.Zipato
             if (endpoints == null)
                 return null;
 
+            // Filter the list of endpoints to endpoints that have attribute with a definition value of OnOff
             var onOffEndpoints =
-                endpoints.Where(e => e.Attributes != null && e.Attributes.Any(a => a.Config != null && !a.Config.Hidden && a.Definition != null &&
+                endpoints.Where(e => e.Attributes != null && e.Attributes.Any(a => (a.Config == null || a.Config != null && !a.Config.Hidden) && a.Definition != null &&
                                                                                   CultureInfo.CurrentCulture
                                                                                       .CompareInfo.IndexOf(
                                                                                           a.Definition.Cluster.Trim(),
@@ -128,7 +129,7 @@ namespace LVMS.Zipato
                                                                                           CompareOptions.IgnoreCase) >=
                                                                                   0)).ToArray();
 
-
+            // Optionally filter the lif of endpoints to exclude Zipabox's own endpoints (e.g. to control Zipabox LEDs)
             if (hideZipaboxInternalEndpoints)
             {
                 onOffEndpoints = onOffEndpoints.Where(e => !e.Attributes.Any(a => a.Device != null &&
