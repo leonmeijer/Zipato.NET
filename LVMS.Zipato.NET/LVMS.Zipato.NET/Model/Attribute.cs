@@ -23,7 +23,7 @@ namespace LVMS.Zipato.Model
         public Network Network { get; set; }       
         
         public bool? ShowIcon { get; set; }
-        public Room Room { get; set; }
+        
         public UiType UIType { get; set; }
     }
 }

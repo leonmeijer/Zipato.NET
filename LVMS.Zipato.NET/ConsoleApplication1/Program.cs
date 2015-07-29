@@ -31,6 +31,9 @@ namespace LVMS.Zipato.TestClient
             await client.LoginAsync(credentials.UserName, credentials.Password);
             Console.WriteLine("Connected.");
 
+
+            var rolluik = await client.GetEndpointAsync("Rolluik Zolder");
+            await client.SetPositionAsync(rolluik, 0);
             var offlineDevices = await client.GetDevicesOfflineAsync();
 
 
