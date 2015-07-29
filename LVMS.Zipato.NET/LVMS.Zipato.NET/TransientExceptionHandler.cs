@@ -13,9 +13,9 @@ namespace LVMS.Zipato
     internal static class TransientExceptionHandler
     {
         internal static async Task<T> ExecuteWithPolicyAsync<T>(this RestClient restClient, ZipatoClient zipatoClient, RestRequest restRequest,
-            CancellationToken cancellationToken = default(CancellationToken), bool retryHttpPostAndPut = true) where T : class
+            CancellationToken cancellationToken = default(CancellationToken), bool retryHttpPostAndPut = true, bool byPassCheckInitialized = false) where T : class
         {
-            PreSendRequest<T>(zipatoClient, restRequest);
+            PreSendRequest<T>(zipatoClient, restRequest, byPassCheckInitialized);
 
             if (!zipatoClient.UsePollyTransientFaultHandling)
                 return await restClient.ExecuteAsync<T>(restRequest, cancellationToken);
@@ -32,9 +32,9 @@ namespace LVMS.Zipato
         }
 
         internal static async Task<RestResponse<T>> SendWithPolicyAsync<T>(this RestClient restClient, ZipatoClient zipatoClient, RestRequest restRequest,
-            CancellationToken cancellationToken = default(CancellationToken), bool retryHttpPostAndPut = true) where T : class
+            CancellationToken cancellationToken = default(CancellationToken), bool retryHttpPostAndPut = true, bool byPassCheckInitialized = false) where T : class
         {
-            PreSendRequest<T>(zipatoClient, restRequest);
+            PreSendRequest<T>(zipatoClient, restRequest, byPassCheckInitialized);
 
             if (!zipatoClient.UsePollyTransientFaultHandling)
                 return await restClient.SendAsync<T>(restRequest, cancellationToken);
@@ -64,12 +64,13 @@ namespace LVMS.Zipato
             return retVal;
         }
 
-        private static void PreSendRequest<T>(ZipatoClient zipatoClient, RestRequest restRequest) where T : class
+        private static void PreSendRequest<T>(ZipatoClient zipatoClient, RestRequest restRequest, bool byPassCheckInitialized) where T : class
         {
             if (zipatoClient == null)
                 throw new ArgumentNullException("zipatoClient");
 
-            zipatoClient.CheckInitialized();
+            if (!byPassCheckInitialized)
+                zipatoClient.CheckInitialized();
             restRequest.AddHeader("Cookie", "JSESSIONID=" + zipatoClient.Jessionid);
         }
 

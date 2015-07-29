@@ -15,20 +15,23 @@ namespace LVMS.Zipato
         private RestClient _httpClient;
         internal string Jessionid;
         private bool _initialized;
-        internal bool UsePollyTransientFaultHandling = true;
+        internal bool UsePollyTransientFaultHandling;
+        private bool _requireZipaboxOnline;
 
         internal const string OnOffCluster = "com.zipato.cluster.OnOff";
         internal const string EndpointTypeActuator = "actuator";
         internal const string ZipaboxInternalName = "Internal device";
-
-        public ZipatoClient()
-        {
-
-        }
-
-        public ZipatoClient(bool usePollyTransientFaultHandling)
+        
+        /// <summary>
+        /// Initializes a new ZipatoClient
+        /// </summary>
+        /// <param name="usePollyTransientFaultHandling">When True (default), all Http Requests use a transient fault handlig framework. Failed Http requests are retried.</param>
+        /// <param name="requireZipaboxOnline">When True (default), upon initialization, this library checks whether or not the 
+        /// Zipabox is online. If the box is offline, a ZipatoException will be thrown. When False, all read-only information can still be retrieved.</param>
+        public ZipatoClient(bool usePollyTransientFaultHandling = true, bool requireZipaboxOnline = true)
         {
             UsePollyTransientFaultHandling = usePollyTransientFaultHandling;
+            _requireZipaboxOnline = requireZipaboxOnline;
         }
 
         /// <summary>
@@ -42,8 +45,6 @@ namespace LVMS.Zipato
 
         public async Task<bool> CheckConnection()
         {
-            if (!_initialized)
-                return false;
             try
             {
                 var zipabox = await GetZipaboxInfo();
@@ -79,7 +80,7 @@ namespace LVMS.Zipato
 
             var initRequest = new RestRequest("user/init", HttpMethod.Get);
             
-            var initResult = await _httpClient.ExecuteWithPolicyAsync<InitResponse>(this, initRequest);
+            var initResult = await _httpClient.ExecuteWithPolicyAsync<InitResponse>(this, initRequest, byPassCheckInitialized:true);
             if (!initResult.Success)                
                 throw new CannotInitializeSessionException();
 
@@ -93,21 +94,24 @@ namespace LVMS.Zipato
             
             loginRequest.AddQueryString("username", userNameEmail);
             loginRequest.AddQueryString("token", token);
-            var loginResult = await _httpClient.ExecuteWithPolicyAsync<UserSession>(this, loginRequest);
+            var loginResult = await _httpClient.ExecuteWithPolicyAsync<UserSession>(this, loginRequest, byPassCheckInitialized: true);
 
             if (!loginResult.Success)
                 throw new AuthenticationFailureException(loginResult.Error);
 
-            _initialized = true;
+            if (_requireZipaboxOnline)
+            {
+                _initialized = await CheckConnection();
+            }
+            else
+                _initialized = true;
         }
 
         public async Task<Zipabox[]> GetZipaboxesInfo()
         {
-            
-
             var request = new RestRequest("multibox/list", HttpMethod.Get);
             
-            return await _httpClient.ExecuteWithPolicyAsync<Zipabox[]>(this, request);
+            return await _httpClient.ExecuteWithPolicyAsync<Zipabox[]>(this, request, byPassCheckInitialized: true);
         }
 
         public async Task<Zipabox> GetZipaboxInfo()
@@ -115,10 +119,5 @@ namespace LVMS.Zipato
             var boxes = await GetZipaboxesInfo();
             return boxes.Length == 0 ? null : boxes[0];
         }
-
-        //protected virtual void PrepareRequest (RestRequest request)
-        //{
-            
-        //}
     }
 }
