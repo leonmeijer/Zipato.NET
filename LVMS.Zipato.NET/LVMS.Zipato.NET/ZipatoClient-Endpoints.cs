@@ -141,8 +141,12 @@ namespace LVMS.Zipato
                                                                                   0)).ToArray();
             }
 
-            // IMPORTANT: I cannot find a way to retrieve of all endpoints that includes information about an endpoint being hidden.
-            // To know if an endpoint is hidden, I need to call /endpoints/uuid for each endpoint which is expensive.
+            // IMPORTANT: I cannot find a way to retrieve a list of all endpoints that includes information about an endpoint being hidden.
+            // In my own setup, I noticed that I have devices with a Temperature Meter endpoint of type 'OnOff switch' that are
+            // hidden by default (Qubino NEWHBA1 double on/off in wall module). When I call GetEndpointsWithOnOffAsync, I expect these
+            // endpoints to be absent.
+            // To know if an endpoint is hidden, I need to call /endpoints/uuid for each endpoint which is expensive. Therefore, I
+            // do it and the end, when we have the smallest list of found On/Off endpoints.
             if (hideHidden)
             {
                 await Task.WhenAll(onOffEndpoints.Select(OverrideEndpointConfig));
