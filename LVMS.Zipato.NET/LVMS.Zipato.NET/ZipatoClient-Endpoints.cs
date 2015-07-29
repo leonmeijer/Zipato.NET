@@ -145,12 +145,12 @@ namespace LVMS.Zipato
             // To know if an endpoint is hidden, I need to call /endpoints/uuid for each endpoint which is expensive.
             if (hideHidden)
             {
-                await Task.WhenAll(onOffEndpoints.Select(SetEndpointVisibility));
+                await Task.WhenAll(onOffEndpoints.Select(OverrideEndpointConfig));
             }
-            return onOffEndpoints.Where(e=> !e.Config.Hidden);
+            return onOffEndpoints.Where(e=> e.Config == null || !e.Config.Hidden);
         }
 
-        private async Task SetEndpointVisibility(Endpoint endpoint)
+        private async Task OverrideEndpointConfig(Endpoint endpoint)
         {
             var newLoadedEndpoint = await GetEndpointOnlyConfigAsync(endpoint.Uuid);
             endpoint.Config = newLoadedEndpoint.Config;
