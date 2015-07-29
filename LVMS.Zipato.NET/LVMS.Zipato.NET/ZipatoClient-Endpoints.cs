@@ -153,7 +153,7 @@ namespace LVMS.Zipato
         private async Task OverrideEndpointConfig(Endpoint endpoint)
         {
             var newLoadedEndpoint = await GetEndpointOnlyConfigAsync(endpoint.Uuid);
-            endpoint.Config = newLoadedEndpoint.Config;
+            if (newLoadedEndpoint != null) endpoint.Config = newLoadedEndpoint.Config;
         }
     }
 }
