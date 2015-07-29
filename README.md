@@ -7,6 +7,7 @@ This library is under development. Currently supported:
 - Secure login to the API
 - Retrieve generic info about your Zipabox (firmware, IP addresses etc).
 - Retrieve endpoints
+- Retrieve devices
 - Retrieve attributes and attribute values
 - Control endpoints such as On/Off, Position (roller shutters) and others
 - Retrieve scenes and run scenes
@@ -48,6 +49,10 @@ To set the new state of an device, call SetOnOffStateAsync. For example, to turn
 To open a roller shutter half way:
 ```
   await client.SetPositionAsync("Bedroom shutter", 50);
+```
+To get a list of endpoints that you can turn on or off (because some devices such as a power strips have multiple endpoints):
+```
+  var onOffEndpoints = await client.GetEndpointsWithOnOffAsync();
 ```
 
 The following code retrieves a list of security alarm partitions, takes the first partition, waits until the partition is ready (i.e. no movement detected by motion sensors), arms the alarm and disarms the alarm 5 seconds later.
