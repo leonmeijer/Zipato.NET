@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using LVMS.Zipato.Enums;
 using LVMS.Zipato.Model;
@@ -17,10 +16,8 @@ namespace LVMS.Zipato
         Endpoint[] _cachedEndpointsList;
         Dictionary<Guid, Endpoint> _cachedEndpoints;
 
-        public async Task<Endpoint[]> GetEndpointsAsync(Enums.EndpointGetModes loadMode = Enums.EndpointGetModes.IncludeEndpointInfoOnly, bool allowCache = true)
+        public async Task<Endpoint[]> GetEndpointsAsync(EndpointGetModes loadMode = EndpointGetModes.IncludeEndpointInfoOnly, bool allowCache = true)
         {
-            CheckInitialized();
-
             if (loadMode == EndpointGetModes.None)
                 return null;
 
@@ -28,17 +25,17 @@ namespace LVMS.Zipato
                 return _cachedEndpointsList;
 
             var request = new RestRequest("endpoints", HttpMethod.Get);
-            PrepareRequest(request);
-            var endpoints = await _httpClient.ExecuteAsync<Endpoint[]>(request);
+            
+            var endpoints = await _httpClient.ExecuteWithPolicyAsync<Endpoint[]>(this, request);
 
-            if (loadMode == Enums.EndpointGetModes.IncludeFullAttributes ||
-                loadMode == Enums.EndpointGetModes.IncludeFullAttributesWithValues)
+            if (loadMode == EndpointGetModes.IncludeFullAttributes ||
+                loadMode == EndpointGetModes.IncludeFullAttributesWithValues)
             {
                 var attributes = await GetAttributesFullAsync(allowCache);
                 var attributesWithEndpoint = attributes.Where(a=>a.Endpoint != null && a.Endpoint.Uuid != Guid.Empty);
                 Attribute[] attributeValues = null;
 
-                if (loadMode == Enums.EndpointGetModes.IncludeFullAttributesWithValues)
+                if (loadMode == EndpointGetModes.IncludeFullAttributesWithValues)
                 {
                     attributeValues = await GetAttributeValuesAsync();
                 }
@@ -62,7 +59,6 @@ namespace LVMS.Zipato
                         endpoint.Attributes.Add(attribute);
                     }
                 }
-
             }
 
             if (allowCache)
@@ -72,15 +68,15 @@ namespace LVMS.Zipato
 
         public async Task<Endpoint> GetEndpointAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedEndpoints != null && _cachedEndpoints.ContainsKey(uuid))
                 return _cachedEndpoints[uuid];
 
             var request = new RestRequest("endpoints/" + uuid + "?attributes=true", HttpMethod.Get);
             
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Endpoint>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Endpoint>(this, request);
 
             if (_cachedEndpoints == null)
                 _cachedEndpoints = new Dictionary<Guid, Endpoint>();
@@ -96,25 +92,25 @@ namespace LVMS.Zipato
 
         public async Task<Endpoint> GetEndpointOnlyConfigAsync(Guid uuid)
         {
-            CheckInitialized();
+            
 
             var request = new RestRequest("endpoints/" + uuid + "?config=true", HttpMethod.Get);
 
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Endpoint>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Endpoint>(this, request);
            
             return result;
         }
 
         public async Task<IEnumerable<Endpoint>> GetEndpointsWithOnOffAsync(bool includeValues = false, bool hideZipaboxInternalEndpoints = true, bool hideHidden = false, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             Endpoint[] endpoints = null;
             if (includeValues)
-                endpoints = await GetEndpointsAsync(Enums.EndpointGetModes.IncludeFullAttributesWithValues, allowCache);
+                endpoints = await GetEndpointsAsync(EndpointGetModes.IncludeFullAttributesWithValues, allowCache);
             else
-                endpoints = await GetEndpointsAsync(Enums.EndpointGetModes.IncludeFullAttributes, allowCache);
+                endpoints = await GetEndpointsAsync(EndpointGetModes.IncludeFullAttributes, allowCache);
 
             if (endpoints == null)
                 return null;
@@ -125,7 +121,7 @@ namespace LVMS.Zipato
                                                                                   CultureInfo.CurrentCulture
                                                                                       .CompareInfo.IndexOf(
                                                                                           a.Definition.Cluster.Trim(),
-                                                                                          ZipatoClient.OnOffCluster,
+                                                                                          OnOffCluster,
                                                                                           CompareOptions.IgnoreCase) >=
                                                                                   0)).ToArray();
 
@@ -136,8 +132,7 @@ namespace LVMS.Zipato
                                                                                   CultureInfo.CurrentCulture
                                                                                       .CompareInfo.IndexOf(
                                                                                           a.Device.Name.Trim(),
-                                                                                          ZipatoClient
-                                                                                              .ZipaboxInternalName,
+                                                                                          ZipaboxInternalName,
                                                                                           CompareOptions.IgnoreCase) >=
                                                                                   0)).ToArray();
             }

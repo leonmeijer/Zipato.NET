@@ -13,8 +13,9 @@ namespace LVMS.Zipato
     {
         protected string ApiUrl = "https://my.zipato.com/zipato-web/v2/";
         private RestClient _httpClient;
-        private string _jessionid;
+        internal string Jessionid;
         private bool _initialized;
+        internal bool UsePollyTransientFaultHandling = true;
 
         internal const string OnOffCluster = "com.zipato.cluster.OnOff";
         internal const string EndpointTypeActuator = "actuator";
@@ -23,6 +24,11 @@ namespace LVMS.Zipato
         public ZipatoClient()
         {
 
+        }
+
+        public ZipatoClient(bool usePollyTransientFaultHandling)
+        {
+            UsePollyTransientFaultHandling = usePollyTransientFaultHandling;
         }
 
         /// <summary>
@@ -73,12 +79,12 @@ namespace LVMS.Zipato
 
             var initRequest = new RestRequest("user/init", HttpMethod.Get);
             
-            var initResult = await _httpClient.ExecuteAsync<InitResponse>(initRequest);
+            var initResult = await _httpClient.ExecuteWithPolicyAsync<InitResponse>(this, initRequest);
             if (!initResult.Success)                
                 throw new CannotInitializeSessionException();
 
             // Save the JSessionId, because we pass this as Cookie value to all future requests
-            _jessionid = initResult.JSessionId;
+            Jessionid = initResult.JSessionId;
             // SHA1-hash the password with the nonce (protects against cross-site forgery)
             string token = Utils.GetToken(password, initResult.Nonce);
 
@@ -87,8 +93,7 @@ namespace LVMS.Zipato
             
             loginRequest.AddQueryString("username", userNameEmail);
             loginRequest.AddQueryString("token", token);
-            PrepareRequest(loginRequest);
-            var loginResult = await _httpClient.ExecuteAsync<UserSession>(loginRequest);
+            var loginResult = await _httpClient.ExecuteWithPolicyAsync<UserSession>(this, loginRequest);
 
             if (!loginResult.Success)
                 throw new AuthenticationFailureException(loginResult.Error);
@@ -98,11 +103,11 @@ namespace LVMS.Zipato
 
         public async Task<Zipabox[]> GetZipaboxesInfo()
         {
-            CheckInitialized();
+            
 
             var request = new RestRequest("multibox/list", HttpMethod.Get);
-            PrepareRequest(request);
-            return await _httpClient.ExecuteAsync<Zipabox[]>(request);
+            
+            return await _httpClient.ExecuteWithPolicyAsync<Zipabox[]>(this, request);
         }
 
         public async Task<Zipabox> GetZipaboxInfo()
@@ -111,9 +116,9 @@ namespace LVMS.Zipato
             return boxes.Length == 0 ? null : boxes[0];
         }
 
-        protected virtual void PrepareRequest (RestRequest request)
-        {
-            request.AddHeader("Cookie", "JSESSIONID=" + _jessionid);
-        }
+        //protected virtual void PrepareRequest (RestRequest request)
+        //{
+            
+        //}
     }
 }

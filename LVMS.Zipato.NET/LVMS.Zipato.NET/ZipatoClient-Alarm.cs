@@ -17,14 +17,14 @@ namespace LVMS.Zipato
 
         public async Task<AlarmPartition[]> GetAlarmPartitionsAsync(bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedAlarmPartitionsList != null)
                 return _cachedAlarmPartitionsList;
 
             var request = new RestRequest("alarm/partitions", HttpMethod.Get);
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<AlarmPartition[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<AlarmPartition[]>(this, request);
 
             if (allowCache || _cachedAlarmPartitionsList != null)
                 _cachedAlarmPartitionsList = result;
@@ -33,15 +33,15 @@ namespace LVMS.Zipato
 
         public async Task<AlarmPartition> GetAlarmPartitionAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedEndpoints != null && _cachedEndpoints.ContainsKey(uuid))
                 return _cachedAlarmPartitions[uuid];
 
             var request = new RestRequest("alarm/partitions/" + uuid + "?full=true", HttpMethod.Get);
             
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<AlarmPartition>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<AlarmPartition>(this, request);
 
 
             if (_cachedAlarmPartitions == null)
@@ -76,14 +76,14 @@ namespace LVMS.Zipato
 
         public async Task<AlarmZone[]> GetAlarmZonesAsync(Guid paritionUuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedAlarmZonesList != null)
                 return _cachedAlarmZonesList;
 
             var request = new RestRequest("alarm/partitions/" + paritionUuid + "/zones", HttpMethod.Get);
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<AlarmZone[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<AlarmZone[]>(this, request);
 
             if (allowCache || _cachedAlarmZonesList != null)
                 _cachedAlarmZonesList = result;
@@ -92,13 +92,13 @@ namespace LVMS.Zipato
 
         public async Task<AlarmZone[]> GetAlarmZonesWithStatusesAsync(Guid paritionUuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             var alarmZones = await GetAlarmZonesAsync(paritionUuid, allowCache);
 
             var request = new RestRequest("alarm/partitions/" + paritionUuid + "/zones/statuses", HttpMethod.Get);
-            PrepareRequest(request);
-            var statuses = await _httpClient.ExecuteAsync<AlarmZoneStatus[]>(request);
+            
+            var statuses = await _httpClient.ExecuteWithPolicyAsync<AlarmZoneStatus[]>(this, request);
 
             foreach (var alarmZone in alarmZones)
             {
@@ -140,7 +140,7 @@ namespace LVMS.Zipato
         public async Task<bool> SetAlarmModeAsync(Guid paritionUuid, string pinCode, Enums.AlarmArmMode newStatus, string secureSessionId = null,
             bool raiseExceptionWhenNotSuccesful = true)
         {
-            CheckInitialized();
+            
 
             if (secureSessionId == null)
             {
@@ -163,10 +163,10 @@ namespace LVMS.Zipato
             };            
 
             var request = new RestRequest("alarm/partitions/" + paritionUuid + "/setMode", HttpMethod.Post);
-            PrepareRequest(request);
+            
             request.ContentType = ContentTypes.Json;
             request.AddParameter(alarmRequest);
-            var retVal = await _httpClient.SendAsync<AlarmRequestResponse>(request);            
+            var retVal = await _httpClient.SendWithPolicyAsync<AlarmRequestResponse>(this, request);            
 
             if (!retVal.HttpResponseMessage.IsSuccessStatusCode)
             {

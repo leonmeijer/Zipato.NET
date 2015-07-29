@@ -17,5 +17,10 @@ namespace LVMS.Zipato.Exceptions
         {
 
         }
+
+        public ZipatoException(string message, Exception innerException) : base(message, innerException)
+        {
+
+        }
     }
 }

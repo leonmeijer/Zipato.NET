@@ -22,22 +22,21 @@ namespace LVMS.Zipato
             if (loadMode == EndpointGetModes.IncludeEndpointInfoOnly)
                 throw new ArgumentException("IncludeEndpointInfoOnly is not supported because it doesn't contain information to correlate devices to endpoints. Please specify IncludeFullAttributes.");
 
-            CheckInitialized();
+            
 
             if (allowCache && _cachedDevicesList != null && _cachedLoadMode == loadMode)
                 return _cachedDevicesList;
 
             var request = new RestRequest("devices", HttpMethod.Get);
-            PrepareRequest(request);
-            var devices = await _httpClient.ExecuteAsync<Device[]>(request);
+            
+            var devices = await _httpClient.ExecuteWithPolicyAsync<Device[]>(this, request);
 
             if (includeDeviceState)
             {
                 // Do a seperate call to get all device statuses and correlate device state with devices
                 // based on uuid
                 var stateRequest = new RestRequest("devices/statuses", HttpMethod.Get);
-                PrepareRequest(stateRequest);
-                var deviceStatuses = await _httpClient.ExecuteAsync<Device[]>(stateRequest);
+                var deviceStatuses = await _httpClient.ExecuteWithPolicyAsync<Device[]>(this, stateRequest);
 
                 foreach (var device in devices)
                 {
@@ -80,7 +79,7 @@ namespace LVMS.Zipato
 
         public async Task<Device[]> GetDevicesOfflineAsync(bool excludeDevicesWithoutEndpoints = true, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             var devices = await GetDevicesAsync(true, EndpointGetModes.IncludeFullAttributes, allowCache);
             if (devices == null)
@@ -93,7 +92,7 @@ namespace LVMS.Zipato
 
         public async Task<Device> GetDeviceAsync(Guid uuid, DeviceGetModes getMode = DeviceGetModes.DeviceOnly, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedDevices != null && _cachedDevices.ContainsKey(uuid))
                 return _cachedDevices[uuid];
@@ -106,8 +105,8 @@ namespace LVMS.Zipato
 
             var request = new RestRequest(resource, HttpMethod.Get);
 
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Device>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Device>(this, request);
 
             if (_cachedDevices == null)
                 _cachedDevices = new Dictionary<Guid, Device>();

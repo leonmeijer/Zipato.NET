@@ -19,11 +19,9 @@ namespace LVMS.Zipato
         /// <returns></returns>
         public async Task<Meteo[]> GetMeteoAsync()
         {
-            CheckInitialized();
-
             var request = new RestRequest("meteo", HttpMethod.Get);
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Meteo[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Meteo[]>(this, request);
             return result;
         }
 
@@ -40,15 +38,12 @@ namespace LVMS.Zipato
         /// <returns></returns>
         public async Task<MeteoConditions> GetMeteoConditionsAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
-
             if (allowCache && _cachedMeteoConditions != null)
                 return _cachedMeteoConditions;
 
             var request = new RestRequest("meteo/" + uuid + "/conditions", HttpMethod.Get);
             
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<MeteoConditions>(request);
+            var result = await _httpClient.ExecuteWithPolicyAsync<MeteoConditions>(this, request);
 
             if (allowCache || _cachedMeteoConditions != null)
                 _cachedMeteoConditions = result;
@@ -70,12 +65,12 @@ namespace LVMS.Zipato
 
         public async Task<MeteoConditions> GetMeteoConditionsWithValuesAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
             var meteoConditions = await GetMeteoConditionsAsync(uuid, allowCache);
             var request = new RestRequest("meteo/attributes/values?update=false", HttpMethod.Get);
 
-            PrepareRequest(request);
-            var attributeValues = await _httpClient.ExecuteAsync<Model.Attribute[]>(request);
+            
+            var attributeValues = await _httpClient.ExecuteWithPolicyAsync<Model.Attribute[]>(this, request);
 
             foreach (Model.Attribute attribute in meteoConditions.Attributes)
             {

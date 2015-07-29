@@ -16,14 +16,14 @@ namespace LVMS.Zipato
 
         public async Task<Scene[]> GetScenesAsync(bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedScenesList != null)
                 return _cachedScenesList;
 
             var request = new RestRequest("scenes", HttpMethod.Get);
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Scene[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Scene[]>(this, request);
 
             if (allowCache || _cachedScenesList != null)
                 _cachedScenesList = result;
@@ -32,15 +32,15 @@ namespace LVMS.Zipato
 
         public async Task<Scene> GetSceneAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedEndpoints != null && _cachedEndpoints.ContainsKey(uuid))
                 return _cachedScenes[uuid];
 
             var request = new RestRequest("scenes/" + uuid, HttpMethod.Get);
             
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Scene>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Scene>(this, request);
 
 
             if (_cachedScenes == null)
@@ -96,8 +96,8 @@ namespace LVMS.Zipato
         {
             var request = new RestRequest("scenes/" + uuid + "/run", HttpMethod.Get);
 
-            PrepareRequest(request);
-            await _httpClient.ExecuteAsync<Scene>(request);
+            
+            await _httpClient.ExecuteWithPolicyAsync<Scene>(this, request);
         }
     }
 }

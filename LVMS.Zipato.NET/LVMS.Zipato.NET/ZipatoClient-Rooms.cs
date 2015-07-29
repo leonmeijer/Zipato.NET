@@ -13,13 +13,13 @@ namespace LVMS.Zipato
         /// <returns></returns>
         public async Task<Room[]> GetRoomsAsync()
         {
-            CheckInitialized();
+            
 
             // Note that this API call requires the forward slash at the end. This is different than
             // other API calls!
             var request = new RestRequest("rooms/", HttpMethod.Get);
-            PrepareRequest(request);
-            return  await _httpClient.ExecuteAsync<Room[]>(request);            
+            
+            return  await _httpClient.ExecuteWithPolicyAsync<Room[]>(this, request);            
         }       
     }
 }

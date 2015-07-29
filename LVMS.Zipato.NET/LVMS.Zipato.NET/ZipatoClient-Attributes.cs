@@ -17,15 +17,15 @@ namespace LVMS.Zipato
 
         public async Task<Model.Attribute[]> GetAttributesAsync(bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedAttributesList != null)
                 return _cachedAttributesList;
 
             var request = new RestRequest("attributes", HttpMethod.Get);
             
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Model.Attribute[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Model.Attribute[]>(this, request);
 
             if (allowCache)
             {
@@ -37,15 +37,15 @@ namespace LVMS.Zipato
 
         public async Task<Model.Attribute[]> GetAttributesFullAsync(bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedAttributesList != null && _cachedListIncludesAttributes)
                 return _cachedAttributesList;
 
             var request = new RestRequest("attributes/full?full=true", HttpMethod.Get);
 
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Model.Attribute[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Model.Attribute[]>(this, request);
 
             if (allowCache)
             {
@@ -57,15 +57,15 @@ namespace LVMS.Zipato
 
         public async Task<Model.Attribute> GetAttributeAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedAttributes != null && _cachedAttributes.ContainsKey(uuid))
                 return _cachedAttributes[uuid];
 
             var request = new RestRequest("attributes/" + uuid, HttpMethod.Get);
 
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Model.Attribute>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Model.Attribute>(this, request);
 
             if (_cachedAttributes == null)
                 _cachedAttributes = new Dictionary<Guid, Model.Attribute>();
@@ -114,15 +114,15 @@ namespace LVMS.Zipato
         /// <returns>True when the request was executed succesful, otherwise False</returns>
         public async Task<bool> SetOnOffStateAsync(Guid attributeUuid, bool newState)
         {
-            CheckInitialized();
+            
 
             // Send a PUT request with 'true' or 'false' as plain-text in the body.
             // Had to modify PortableRest package to support this.
             var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Put);
             request.ContentType = ContentTypes.PlainText;
-            PrepareRequest(request);
+            
             request.AddParameter(newState.ToString().ToLowerInvariant());
-            var returnValue = await _httpClient.ExecuteAsync<object>(request);
+            var returnValue = await _httpClient.ExecuteWithPolicyAsync<object>(this, request);
             return true;
         }
 
@@ -135,7 +135,7 @@ namespace LVMS.Zipato
         /// <returns>True when the request was executed succesful, otherwise False</returns>
         public async Task<bool> SetOnOffStateAsync(Endpoint endpoint, bool newState)
         {
-            CheckInitialized();           
+                       
 
             Model.Attribute stateAttribute = await GetAttributeAsync(endpoint, Enums.CommonAttributeNames.STATE);
             return await SetOnOffStateAsync(stateAttribute.Uuid, newState);
@@ -164,15 +164,15 @@ namespace LVMS.Zipato
         /// <returns>True when the request was executed succesful, otherwise False</returns>
         public async Task<bool> SetPositionAsync(Guid attributeUuid, int position)
         {
-            CheckInitialized();
+            
 
             // Send a PUT request as plain-text in the body.
             // Had to modify PortableRest package to support this.
             var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Put);
             request.ContentType = ContentTypes.PlainText;
-            PrepareRequest(request);
+            
             request.AddParameter(position.ToString().ToLowerInvariant());
-            var returnValue = await _httpClient.ExecuteAsync<object>(request);
+            var returnValue = await _httpClient.ExecuteWithPolicyAsync<object>(this, request);
             return true;
         }
 
@@ -185,7 +185,7 @@ namespace LVMS.Zipato
         /// <returns>True when the request was executed succesful, otherwise False</returns>
         public async Task<bool> SetPositionAsync(Endpoint endpoint, int position)
         {
-            CheckInitialized();
+            
 
             Model.Attribute stateAttribute = await GetAttributeAsync(endpoint, Enums.CommonAttributeNames.POSITION);
             return await SetPositionAsync(stateAttribute.Uuid, position);
@@ -245,7 +245,7 @@ namespace LVMS.Zipato
         /// <returns>True when the endpoint if on / enabled, otherwise False</returns>
         public async Task<bool> GetOnOffStateAsync(Endpoint endpoint)
         {
-            CheckInitialized();
+            
 
             Model.Attribute stateAttribute = await GetAttributeAsync(endpoint, Enums.CommonAttributeNames.STATE);
             return await GetOnOffStateAsync(stateAttribute.Uuid);
@@ -258,23 +258,23 @@ namespace LVMS.Zipato
         /// <returns>True when the endpoint if on / enabled, otherwise False</returns>
         public async Task<bool> GetOnOffStateAsync(Guid attributeUuid)
         {
-            CheckInitialized();
+            
 
             var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Get);
 
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Model.AttributeValue>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Model.AttributeValue>(this, request);
             return bool.Parse(result.Value);
         }
 
         public async Task<Model.Attribute[]> GetAttributeValuesAsync()
         {
-            CheckInitialized();
+            
 
             var request = new RestRequest("attributes/values", HttpMethod.Get);
 
-            PrepareRequest(request);
-            return await _httpClient.ExecuteAsync<Model.Attribute[]>(request);
+            
+            return await _httpClient.ExecuteWithPolicyAsync<Model.Attribute[]>(this, request);
         }
 
         /// <summary>
@@ -284,7 +284,7 @@ namespace LVMS.Zipato
         /// <returns>The value of the attribute, converted to T</returns>
         public async Task<T> GetAttributeValueAsync<T>(Model.Attribute attribute)
         {
-            CheckInitialized();
+            
 
             return await GetAttributeValueAsync<T>(attribute.Uuid);
         }
@@ -296,12 +296,12 @@ namespace LVMS.Zipato
         /// <returns>The value of the attribute, converted to T</returns>
         public async Task<T> GetAttributeValueAsync<T>(Guid attributeUuid)
         {
-            CheckInitialized();
+            
 
             var request = new RestRequest("attributes/" + attributeUuid + "/value", HttpMethod.Get);
 
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Model.AttributeValue>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Model.AttributeValue>(this, request);
             return Utils.ChangeType<T>(result.Value);
         }
 
@@ -313,7 +313,7 @@ namespace LVMS.Zipato
         /// <returns>The value of the attribute, converted to T</returns>
         public async Task<T> GetAttributeValueAsync<T>(Endpoint endpoint, Enums.CommonAttributeNames attribute)
         {
-            CheckInitialized();
+            
 
             string attributeName = Enum.GetName(typeof(Enums.CommonAttributeNames), attribute);
             return await GetAttributeValueAsync<T>(endpoint, attributeName);
@@ -327,7 +327,7 @@ namespace LVMS.Zipato
         /// <returns>The value of the attribute, converted to T</returns>
         public async Task<T> GetAttributeValueAsync<T>(Endpoint endpoint, string attributeName)
         {
-            CheckInitialized();
+            
             var attribute = await GetAttributeAsync(endpoint, attributeName);
             return await GetAttributeValueAsync<T>(attribute);
         }
@@ -340,7 +340,7 @@ namespace LVMS.Zipato
         /// <returns>The value of the attribute, converted to T</returns>
         public async Task<T> GetAttributeValueAsync<T>(string endpointName, Enums.CommonAttributeNames attribute)
         {
-            CheckInitialized();
+            
 
             Endpoint endpoint = await GetEndpointAsync(endpointName);
             return await GetAttributeValueAsync<T>(endpoint, attribute);
@@ -354,7 +354,7 @@ namespace LVMS.Zipato
         /// <returns>The value of the attribute, converted to T</returns>
         public async Task<T> GetAttributeValueAsync<T>(string endpointName, string attributeName)
         {
-            CheckInitialized();
+            
             Endpoint endpoint = await GetEndpointAsync(endpointName);
             return await GetAttributeValueAsync<T>(endpoint, attributeName);
         }

@@ -13,13 +13,13 @@ namespace LVMS.Zipato
         /// <returns></returns>
         public async Task<Contact[]> GetContactsAsync()
         {
-            CheckInitialized();
+            
 
             // Note that this API call requires the forward slash at the end. This is different than
             // other API calls!
             var request = new RestRequest("contacts", HttpMethod.Get);
-            PrepareRequest(request);
-            return  await _httpClient.ExecuteAsync<Contact[]>(request);            
+            
+            return  await _httpClient.ExecuteWithPolicyAsync<Contact[]>(this, request);            
         }       
     }
 }

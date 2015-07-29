@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
+using System.Net;
 using System.Threading.Tasks;
-using LVMS.Zipato;
 using LVMS.Zipato.Enums;
-using LVMS.Zipato.Model;
+using LVMS.Zipato.TestClient.Properties;
 
 namespace LVMS.Zipato.TestClient
 {
@@ -42,22 +40,22 @@ namespace LVMS.Zipato.TestClient
             var partitions = await client.GetAlarmPartitionsAsync();
             var partition = await client.GetAlarmPartitionAsync(partitions[0].Uuid);
 
-            await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
+            await client.SetAlarmModeAsync(partition, "0000", AlarmArmMode.DISARMED);
 
             while (!await client.IsAlarmPartitionReady(partition.Uuid))
             {
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
-            await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.AWAY);
+            await client.SetAlarmModeAsync(partition, "0000", AlarmArmMode.AWAY);
             await Task.Delay(TimeSpan.FromSeconds(5));
-            await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
+            await client.SetAlarmModeAsync(partition, "0000", AlarmArmMode.DISARMED);
 
             var alarmReady = await client.IsAlarmPartitionReady(partition.Uuid);
             if (alarmReady)
             {
-                await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.AWAY);
+                await client.SetAlarmModeAsync(partition, "0000", AlarmArmMode.AWAY);
                 await Task.Delay(TimeSpan.FromSeconds(5));
-                await client.SetAlarmModeAsync(partition, "0000", Enums.AlarmArmMode.DISARMED);
+                await client.SetAlarmModeAsync(partition, "0000", AlarmArmMode.DISARMED);
             }
             //await client.SetOnOffState("Kantoorverlichting", true);
 
@@ -78,15 +76,15 @@ namespace LVMS.Zipato.TestClient
         /// Credentials are loaded from a text file or from a prompt.
         /// </summary>
         /// <returns></returns>
-        private static System.Net.NetworkCredential GetCredentials()
+        private static NetworkCredential GetCredentials()
         {
             try
             {
-                if (!string.IsNullOrWhiteSpace(Properties.Settings.Default.CredentialsFile) && File.Exists(
-                    Environment.ExpandEnvironmentVariables(Properties.Settings.Default.CredentialsFile)))
+                if (!string.IsNullOrWhiteSpace(Settings.Default.CredentialsFile) && File.Exists(
+                    Environment.ExpandEnvironmentVariables(Settings.Default.CredentialsFile)))
                 {
-                    var lines = File.ReadLines(Environment.ExpandEnvironmentVariables(Properties.Settings.Default.CredentialsFile)).ToArray();
-                    return new System.Net.NetworkCredential(lines[0], lines[1]);
+                    var lines = File.ReadLines(Environment.ExpandEnvironmentVariables(Settings.Default.CredentialsFile)).ToArray();
+                    return new NetworkCredential(lines[0], lines[1]);
                 }
             }
             catch (Exception ex)
@@ -100,7 +98,7 @@ namespace LVMS.Zipato.TestClient
         /// Prompt the user for a user name and password.
         /// </summary>
         /// <returns></returns>
-        private static System.Net.NetworkCredential GetCredentialsViaPrompt()
+        private static NetworkCredential GetCredentialsViaPrompt()
         {
             Console.WriteLine("Please enter your Zipato credentials.");
             Console.Write("User name (e-mail address): ");
@@ -109,7 +107,7 @@ namespace LVMS.Zipato.TestClient
             string password = ReadPassword();
             Console.WriteLine();
 
-            return new System.Net.NetworkCredential(username, password);
+            return new NetworkCredential(username, password);
         }
 
         // Taken from http://stackoverflow.com/a/7049688/393367
@@ -127,13 +125,13 @@ namespace LVMS.Zipato.TestClient
             var pass = new Stack<char>();
             char chr = (char)0;
 
-            while ((chr = System.Console.ReadKey(true).KeyChar) != ENTER)
+            while ((chr = Console.ReadKey(true).KeyChar) != ENTER)
             {
                 if (chr == BACKSP)
                 {
                     if (pass.Count > 0)
                     {
-                        System.Console.Write("\b \b");
+                        Console.Write("\b \b");
                         pass.Pop();
                     }
                 }
@@ -141,7 +139,7 @@ namespace LVMS.Zipato.TestClient
                 {
                     while (pass.Count > 0)
                     {
-                        System.Console.Write("\b \b");
+                        Console.Write("\b \b");
                         pass.Pop();
                     }
                 }
@@ -149,11 +147,11 @@ namespace LVMS.Zipato.TestClient
                 else
                 {
                     pass.Push((char)chr);
-                    System.Console.Write(mask);
+                    Console.Write(mask);
                 }
             }
 
-            System.Console.WriteLine();
+            Console.WriteLine();
 
             return new string(pass.Reverse().ToArray());
         }

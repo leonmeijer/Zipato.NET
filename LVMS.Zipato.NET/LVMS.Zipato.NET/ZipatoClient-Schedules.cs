@@ -20,14 +20,14 @@ namespace LVMS.Zipato
         /// <returns></returns>
         public async Task<Schedule[]> GetSchedulesAsync(bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedSchedulesList != null)
                 return _cachedSchedulesList;
 
             var request = new RestRequest("schedules", HttpMethod.Get);
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Schedule[]>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Schedule[]>(this, request);
 
             if (allowCache || _cachedSchedulesList != null)
                 _cachedSchedulesList = result;
@@ -42,15 +42,15 @@ namespace LVMS.Zipato
         /// <returns></returns>
         public async Task<Schedule> GetScheduleAsync(Guid uuid, bool allowCache = true)
         {
-            CheckInitialized();
+            
 
             if (allowCache && _cachedSchedules != null && _cachedSchedules.ContainsKey(uuid))
                 return _cachedSchedules[uuid];
 
             var request = new RestRequest("schedules/" + uuid + "?full=true", HttpMethod.Get);
             
-            PrepareRequest(request);
-            var result = await _httpClient.ExecuteAsync<Schedule>(request);
+            
+            var result = await _httpClient.ExecuteWithPolicyAsync<Schedule>(this, request);
 
 
             if (_cachedSchedules == null)
