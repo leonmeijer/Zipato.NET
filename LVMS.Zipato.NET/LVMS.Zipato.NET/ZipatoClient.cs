@@ -13,7 +13,7 @@ namespace LVMS.Zipato
     {
         protected string ApiUrl = "https://my.zipato.com/zipato-web/v2/";
         private RestClient _httpClient;
-        internal string Jessionid;
+        internal string JSessionId;
         private bool _initialized;
         internal bool UsePollyTransientFaultHandling;
         private bool _requireZipaboxOnline;
@@ -28,20 +28,13 @@ namespace LVMS.Zipato
         /// <param name="usePollyTransientFaultHandling">When True (default), all Http Requests use a transient fault handlig framework. Failed Http requests are retried.</param>
         /// <param name="requireZipaboxOnline">When True (default), upon initialization, this library checks whether or not the 
         /// Zipabox is online. If the box is offline, a ZipatoException will be thrown. When False, all read-only information can still be retrieved.</param>
-        public ZipatoClient(bool usePollyTransientFaultHandling = true, bool requireZipaboxOnline = true)
+        public ZipatoClient(string apiUrl = null, bool usePollyTransientFaultHandling = true, bool requireZipaboxOnline = true)
         {
+            if (apiUrl != null)
+                ApiUrl = apiUrl;
             UsePollyTransientFaultHandling = usePollyTransientFaultHandling;
             _requireZipaboxOnline = requireZipaboxOnline;
-        }
-
-        /// <summary>
-        /// Initializes a new ZipatoClient instance with a custom API url.
-        /// </summary>
-        /// <param name="apiUrl">Endpoint address of the Zipato REST API</param>
-        public ZipatoClient(string apiUrl) : this()
-        {
-            ApiUrl = apiUrl;
-        }
+        }        
 
         public async Task<bool> CheckConnection()
         {
@@ -85,7 +78,7 @@ namespace LVMS.Zipato
                 throw new CannotInitializeSessionException();
 
             // Save the JSessionId, because we pass this as Cookie value to all future requests
-            Jessionid = initResult.JSessionId;
+            JSessionId = initResult.JSessionId;
             // SHA1-hash the password with the nonce (protects against cross-site forgery)
             string token = Utils.GetToken(password, initResult.Nonce);
 

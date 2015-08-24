@@ -71,7 +71,7 @@ namespace LVMS.Zipato
 
             if (!byPassCheckInitialized)
                 zipatoClient.CheckInitialized();
-            restRequest.AddHeader("Cookie", "JSESSIONID=" + zipatoClient.Jessionid);
+            restRequest.AddHeader("Cookie", "JSESSIONID=" + zipatoClient.JSessionId);
         }
 
         private static async Task<RestResponse<T>> SendRequestAndCheckForException<T>(RestClient restClient, RestRequest restRequest,
