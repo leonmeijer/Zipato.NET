@@ -8,7 +8,7 @@ This library is under development. Currently supported:
 - Retrieve generic info about your Zipabox (firmware, IP addresses etc).
 - Retrieve endpoints
 - Retrieve devices
-- Retrieve attributes and attribute values. NOTE: The remote API returns names and attributeNames. The local API only returnes the attributeNames.
+- Retrieve attributes and attribute values. NOTE: The remote API returns names and attributeNames. The local API only returns the attributeNames; no names.
 - Control endpoints such as On/Off, Position (roller shutters) and others
 - Retrieve scenes and run scenes
 - Retrieve room list
