@@ -17,23 +17,27 @@ namespace LVMS.Zipato
         private bool _initialized;
         internal bool UsePollyTransientFaultHandling;
         private bool _requireZipaboxOnline;
+        private readonly bool _localApi;
 
         internal const string OnOffCluster = "com.zipato.cluster.OnOff";
         internal const string EndpointTypeActuator = "actuator";
         internal const string ZipaboxInternalName = "Internal device";
-        
+
         /// <summary>
         /// Initializes a new ZipatoClient
         /// </summary>
+        /// <param name="apiUrl">The default remote API is https://my.zipato.com/zipato-web/v2/</param>
         /// <param name="usePollyTransientFaultHandling">When True (default), all Http Requests use a transient fault handlig framework. Failed Http requests are retried.</param>
         /// <param name="requireZipaboxOnline">When True (default), upon initialization, this library checks whether or not the 
         /// Zipabox is online. If the box is offline, a ZipatoException will be thrown. When False, all read-only information can still be retrieved.</param>
-        public ZipatoClient(string apiUrl = null, bool usePollyTransientFaultHandling = true, bool requireZipaboxOnline = true)
+        /// <param name="localApi"></param>
+        public ZipatoClient(string apiUrl = null, bool usePollyTransientFaultHandling = true, bool requireZipaboxOnline = true, bool localApi = false)
         {
             if (apiUrl != null)
                 ApiUrl = apiUrl;
             UsePollyTransientFaultHandling = usePollyTransientFaultHandling;
             _requireZipaboxOnline = requireZipaboxOnline;
+            _localApi = localApi;
         }        
 
         public async Task<bool> CheckConnection()
@@ -107,8 +111,17 @@ namespace LVMS.Zipato
             return await _httpClient.ExecuteWithPolicyAsync<Zipabox[]>(this, request, byPassCheckInitialized: true);
         }
 
+        public async Task<Zipabox> GetLocalZipaboxInfo()
+        {
+            var request = new RestRequest("box", HttpMethod.Get);
+
+            return await _httpClient.ExecuteWithPolicyAsync<Zipabox>(this, request, byPassCheckInitialized: true);
+        }
+
         public async Task<Zipabox> GetZipaboxInfo()
         {
+            if (_localApi)
+                return await GetLocalZipaboxInfo();
             var boxes = await GetZipaboxesInfo();
             return boxes.Length == 0 ? null : boxes[0];
         }

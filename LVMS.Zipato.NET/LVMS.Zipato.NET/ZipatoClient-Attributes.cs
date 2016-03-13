@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using LVMS.Zipato.Enums;
 using LVMS.Zipato.Model;
 using PortableRest;
 
@@ -185,8 +186,6 @@ namespace LVMS.Zipato
         /// <returns>True when the request was executed succesful, otherwise False</returns>
         public async Task<bool> SetPositionAsync(Endpoint endpoint, int position)
         {
-            
-
             Model.Attribute stateAttribute = await GetAttributeAsync(endpoint, Enums.CommonAttributeNames.POSITION);
             return await SetPositionAsync(stateAttribute.Uuid, position);
         }
@@ -210,7 +209,7 @@ namespace LVMS.Zipato
         /// <param name="endpoint">Endpoint instance</param>
         /// <param name="attributeName">Attribute name</param>
         /// <returns>Attribute instance</returns>
-        private async Task<Model.Attribute> GetAttributeAsync(Endpoint endpoint, string attributeName)
+        private async Task<Model.Attribute> GetAttributeAsync(Endpoint endpoint, string attributeName, bool whenLocalTryFullFetch = true)
         {
             if (endpoint.Attributes == null)
                 endpoint = await GetEndpointAsync(endpoint.Uuid);
@@ -220,7 +219,32 @@ namespace LVMS.Zipato
             var stateAttribute = endpoint.Attributes.FirstOrDefault(a => (a.Name != null && a.Name.ToLowerInvariant() == attributeName.ToLowerInvariant()) ||
                             (a.AttributeName != null && a.AttributeName.ToLowerInvariant() == attributeName.ToLowerInvariant()));
             if (stateAttribute == null)
-                throw new Exceptions.CannotChangeStateException("Couldn't find an attribute with name '" +attributeName + "' on endpoint: " + endpoint.Uuid);
+            {
+                if (_cachedAttributesList != null)
+                {
+                    stateAttribute =
+                        _cachedAttributesList.FirstOrDefault(
+                            a => a.Endpoint.Uuid == endpoint.Uuid &&
+                                (a.Name != null &&
+                                 a.Name.Equals(attributeName, StringComparison.CurrentCultureIgnoreCase)));
+                }
+            }
+            if (stateAttribute == null)
+            {
+                if (_localApi && whenLocalTryFullFetch)
+                {
+                    // Local API doesn't always return the same data as Remote API.
+                    // The attribute may not be found, so a full fetch is needed. Flush cache.
+                    _cachedEndpointsList = null;
+                    _cachedAttributesList = null;
+                    await GetEndpointsAsync(EndpointGetModes.IncludeFullAttributesWithValues);
+                    return await GetAttributeAsync(endpoint, attributeName, false);
+                }
+                throw new Exceptions.CannotChangeStateException("Couldn't find an attribute with name '" +
+                                                                attributeName +
+                                                                "' on endpoint: " + endpoint.Uuid);
+            }
+
             return stateAttribute;
         }
 

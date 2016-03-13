@@ -8,7 +8,7 @@ namespace LVMS.Zipato.Model
 {
     public class AttributeDefinition
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Attribute { get; set; }
         public string AttributeType { get; set; }
         public string Cluster { get; set; }
