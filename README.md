@@ -1,5 +1,5 @@
 # LVMS.Zipato.NET
-Unofficial open source C# helper library for communication with the Zipabox controller from Zipato. This library connects to the cloud-based API, hosted on https://my.zipato.com/zipato-web/api/ (on Amazon AWS, web page only works if you're authenticated with my.zipato.com). All calls support the async/await model. The local API is not supported.
+Unofficial open source C# helper library for communication with the Zipabox controller from Zipato. This library connects to the cloud-based API hosted on https://my.zipato.com/zipato-web/api/ (on Amazon AWS, web page only works if you're authenticated with my.zipato.com) AND to the local API. All calls support the async/await model. The local API is not supported.
 
 According to www.zipato.com, Zipato is an interactive security and automation system based on cloud technology. You can control, customize and automate all power devices in your home, watch live video from your home and get instant alerts in case of any security issue. The controller/gateway supports various automation protocols (Z-Wave, ZigBee, KNX, 433 MHz, EnOcean).
 
@@ -8,7 +8,7 @@ This library is under development. Currently supported:
 - Retrieve generic info about your Zipabox (firmware, IP addresses etc).
 - Retrieve endpoints
 - Retrieve devices
-- Retrieve attributes and attribute values
+- Retrieve attributes and attribute values. NOTE: The remote API returns names and attributeNames. The local API only returnes the attributeNames.
 - Control endpoints such as On/Off, Position (roller shutters) and others
 - Retrieve scenes and run scenes
 - Retrieve room list
@@ -22,7 +22,8 @@ This Portable Library is compatible with: (ASP).Net 4.5/4.6, Windows (Phone) 8.1
 ## How to use?
 Use the source code from this repository or download the NuGet package: [LVMS.ZipatoNet.Signed](https://www.nuget.org/packages/LVMS.ZipatoNet.Signed/). In this repo, you can find an example application named LVMS.Zipato.NET.TestClient (ConsoleApplication1).
 	
-	var client = new ZipatoClient();
+	var client = new ZipatoClient(); // for the remote api
+	var localClient = new ZipatoClient(apiUrl: "http://192.168.2.99:8080/v2/", localApi:true); // 192.168.2.99 is the local IP in this case
 	bool loggedIn = await client.LoginAsync(credentials.UserName, credentials.Password);
 	
 To retrieve a list of endpoints:	
