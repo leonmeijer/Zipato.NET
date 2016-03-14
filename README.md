@@ -37,11 +37,11 @@ There are 3 supported styles:
 - Use names, such as endpoint names or scene names
 - Use the UUID, unique GUIDs within the Zipato system
 
-For example:
+Style examples:
 ```
   bool lightsOn = await client.GetOnOffStateAsync(endpoint);
-  lightsOn = await client.GetOnOffStateAsync("Office Lights");
-  lightsOn = await client.GetOnOffStateAsync(Guid.Parse("e79e83d3-6d97-49cc-89a7-cec7baf0c948"));
+  bool lightsOn = await client.GetOnOffStateAsync("Office Lights");
+  bool lightsOn = await client.GetOnOffStateAsync(Guid.Parse("e79e83d3-6d97-49cc-89a7-cec7baf0c948"));
 ```
 To set the new state of an device, call SetOnOffStateAsync. For example, to turn on a lamp:
   ```
