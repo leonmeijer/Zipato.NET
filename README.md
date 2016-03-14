@@ -43,7 +43,7 @@ Style examples:
   bool lightsOn = await client.GetOnOffStateAsync("Office Lights");
   bool lightsOn = await client.GetOnOffStateAsync(Guid.Parse("e79e83d3-6d97-49cc-89a7-cec7baf0c948"));
 ```
-To set the new state of an device, call SetOnOffStateAsync. For example, to turn on a lamp:
+To set the new state of a device, call SetOnOffStateAsync. For example, to turn on a lamp:
   ```
   await client.SetOnOffStateAsync("Office Lights", true);
   ```
